@@ -179,14 +179,15 @@ void QuickPick::render() {
     const int visible = std::max(1, static_cast<int>((height - listTop - 39) / rowHeight));
     for (int i = firstVisible_; i < static_cast<int>(filtered_.size()) && i < firstVisible_ + visible; ++i) {
         const auto& item = items_[filtered_[i]];
+        const float indent = static_cast<float>(std::clamp(item.depth, 0, 2) * 12);
         const float y = listTop + (i - firstVisible_) * rowHeight;
         if (i == selected_) paint_.round(rect(7, y, width - 14, rowHeight), theme_.selected, 3);
         const std::wstring glyph = item.kind == 'C' ? L"C" : item.kind == 'f' ? L"ƒ" :
             item.kind == '#' ? L"#" : item.kind == 'P' ? L"Py" :
             item.kind == 'M' ? L"M↓" : item.kind == 'J' ? L"JS" : L"";
-        if (glyph.empty()) paint_.icon(Icon::File, 20, y + 10, 15, theme_.muted);
-        else paint_.text(glyph, rect(19, y, 24, rowHeight), theme_.blue, 10, 500, 0, true);
-        paint_.text(item.label, rect(51, y, width * .52f - 51, rowHeight), theme_.text, 11);
+        if (glyph.empty()) paint_.icon(Icon::File, 20 + indent, y + 10, 15, theme_.muted);
+        else paint_.text(glyph, rect(19 + indent, y, 24, rowHeight), theme_.blue, 10, 500, 0, true);
+        paint_.text(item.label, rect(51 + indent, y, width * .52f - 51 - indent, rowHeight), theme_.text, 11);
         paint_.text(item.detail, rect(width * .52f, y, width * .48f - 20, rowHeight), theme_.muted, 9, 400, 1);
     }
     if (filtered_.empty()) paint_.text(L"没有匹配的结果", rect(20, listTop + 18, width - 40, 35), theme_.muted, 11);

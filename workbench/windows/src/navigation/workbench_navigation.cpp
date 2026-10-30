@@ -6,6 +6,8 @@ orbit::NavigationLocation App::captureEditorLocation() {
     if (active.empty() || !documents.contains(active)) return location;
     auto& document = documents.at(active);
     location.path = active;
+    const auto tab = std::find(tabs.begin(), tabs.end(), active);
+    if (tab != tabs.end()) location.tabIndex = static_cast<int>(tab - tabs.begin());
     location.view = document.view;
     if (document.loaded && document.pointer && sci(SCI_GETDOCPOINTER) == document.pointer) {
         location.view.caret = sci(SCI_GETCURRENTPOS);
@@ -102,9 +104,12 @@ void App::showFileOutline() {
     closeMenu();
     rebuildSymbols();
     std::vector<orbit::QuickPickItem> rows;
+    std::string container;
     for (const auto& symbol : symbols) {
-        rows.push_back({active, wide(symbol.name), L"第 " + std::to_wstring(symbol.line + 1) + L" 行",
-            symbol.line, symbol.kind});
+        if (symbol.depth == 0) container = symbol.kind == 'C' ? symbol.name : "";
+        const auto detail = (!container.empty() && symbol.depth > 0 ? wide(container) + L" · " : L"") +
+            L"第 " + std::to_wstring(symbol.line + 1) + L" 行";
+        rows.push_back({active, wide(symbol.name), detail, symbol.line, symbol.kind, symbol.depth});
     }
     quickPick.show(window, dpi, theme, d2d.Get(), dw.Get(), fontCollection.Get(),
         L"文件结构 · " + wide(baseName(active)), L"搜索类、函数或标题…", std::move(rows),

@@ -13,6 +13,9 @@ not hold Windows handles or editor text; the host adapts that state to Scintilla
 | `src/editor/commands.*` | Editor-only line/selection operations, grouped for undo. |
 | `src/editor/text_format.h` | Newline detection without rewriting existing content. |
 | `src/ui/quick_pick.*` | Reusable native filtered list. Owns its popup, input font, brush, and rendering resources. |
+| `src/runtime/output_buffer.*` | UI-independent bounded transport, cancellation, and UTF-8-safe line display limits. |
+| `src/runtime/console_view.*` | Non-owning Scintilla console adapter: bounded display, styles, viewport following, and disabled undo. |
+| `src/workspace/project_tree.*` | UI-independent directory membership index and visible-row projection. |
 | `src/workspace.cpp` | File loading/saving, project state, and document activation. |
 | `src/runtime.cpp` | Python process management and output. |
 | `src/tests/workbench_tests.cpp` | Pure model checks plus isolated native-editor workflows. |
@@ -43,8 +46,29 @@ and return a selected value after closing; they do not open files themselves.
 New shortcuts must check editor focus so they cannot modify files while the user
 is typing into a search box or terminal input.
 
-The earlier performance audit remains a baseline. This update addresses cached
-activation, closed-document retention, and unnecessary tree rebuilding during
-navigation. Long-line process output and synchronous checkpoint loading still
-need separate work. This is a native editing/navigation update, not a language
-server, semantic refactoring engine, or debugger implementation.
+The earlier performance audit remains a baseline. The two passes address cached
+activation, closed-document retention, indexed tree projection, bounded process
+output, and background checkpoint listing. Main-workbench repaint regions and
+remaining synchronous file-operation waits still need separate work. This is a
+native workbench update, not a language server, semantic refactoring engine, or
+debugger implementation.
+
+## Output and checkpoint budgets
+
+The process output transport has a 1 MiB capacity. A full queue applies backpressure;
+stopping the process wakes blocked writers. The UI consumes at most 256 KiB per
+timer tick, approximately every 16 ms while a process runs. Process completion
+drains the remaining bounded data before displaying its final status.
+
+Each console displays at most 2 MiB and disables undo history. Individual physical
+lines display at most 16 KiB, followed by an explicit truncation marker. Display
+truncation is intentional: complete oversized output is not retained in the UI
+or automatically saved elsewhere. Vertical following does not move the caret to
+the end of a growing line. Old console text is removed in amortized blocks.
+
+Project directory membership is indexed on file-set changes. Expanding directories
+projects rows from that index. Checkpoint listing selects up to ten recent snapshots
+on a worker and retains only metadata. New snapshots have small metadata sidecars;
+legacy snapshots can be read on the worker. Restore still loads the selected
+snapshot and performs its backup/write workflow, so it is not claimed to be fully
+asynchronous.

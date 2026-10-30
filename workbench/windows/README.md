@@ -100,3 +100,17 @@ See the [workflow comparison](docs/pycharm-comparison.md) and
 [code structure](docs/architecture.md). Run `app\OrbitNative.exe --workbench-test`
 for the new isolated checks. `build.cmd --app-only` skips dependency rebuilding
 when the existing vendored static libraries are already available.
+
+## Second performance and structure pass
+
+Process output uses a bounded 1 MiB queue with backpressure and batched UI updates.
+The visible console is limited to 2 MiB; physical lines display up to 16 KiB with
+an explicit truncation marker. Oversized complete logs are not saved elsewhere.
+Console undo is disabled, and following output does not repeatedly reposition the
+caret at the end of a long line.
+
+Directory expansion uses a cached membership index. Checkpoint listing runs on a
+worker and keeps metadata only; restoration loads the selected snapshot separately.
+Run `app\OrbitNative.exe --performance-test` for stress checks, cancellation,
+UTF-8 boundaries, memory limits, and recorded method-level timings. See
+[the measured follow-up](docs/performance-followup.md) and `qa/performance-tests.json`.

@@ -1,13 +1,13 @@
 {
-  "checks": 35,
+  "checks": 37,
   "passed": true,
   "performance": {
     "cached_10MiB_activation_samples_ms": [
-      1.6382,
-      1.5426,
-      1.751,
-      1.7075,
-      1.4825
+      2.0366,
+      1.7901,
+      1.9354,
+      1.7989,
+      1.7368
     ],
     "scope": "Five method-level warm samples; not input-to-screen latency. No disk read or full lexical analysis is forced on activation."
   },
@@ -66,6 +66,10 @@
     },
     {
       "name": "open_second_native_document",
+      "passed": true
+    },
+    {
+      "name": "reopen_restores_original_tab_order",
       "passed": true
     },
     {
@@ -138,6 +142,10 @@
     },
     {
       "name": "recent_files_and_view_state_are_persisted",
+      "passed": true
+    },
+    {
+      "name": "recoverable_delete_cannot_recreate_dirty_closed_file",
       "passed": true
     },
     {

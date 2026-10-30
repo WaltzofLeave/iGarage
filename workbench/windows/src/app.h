@@ -2,17 +2,24 @@
 #include "core.h"
 #include "navigation/history.h"
 #include "ui/quick_pick.h"
+#include "runtime/console_view.h"
+#include "workspace/project_tree.h"
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shobjidl.h>
 #include <dwmapi.h>
 #include <psapi.h>
 #include <windowsx.h>
-struct TreeRow{std::string path,label;int depth=0;bool folder=false;};
 struct MenuItem{std::wstring label,key;std::string action,data;bool separator=false;};
 struct PaletteItem{std::wstring label,detail;std::string action,data;};
 class App{
 public:
+ int workbenchTest(const fs::path& report);
+ int performanceTest(const fs::path& report);
+ bool hasTransientPopup() const { return popup || quickPick.isOpen(); }
+
+private:
+ // The host owns these subsystems; UI code dispatches actions instead of mutating them.
  orbit::NavigationHistory navigation;
  orbit::QuickPick quickPick;
  std::optional<orbit::NavigationLocation> pendingNavigation;
@@ -31,7 +38,15 @@ public:
  void releaseClosedDocument(const std::string& path);
  bool workbenchAction(const std::string& id, const std::string& data);
  bool workbenchKey(UINT key, bool ctrl, bool shift, bool alt);
- int workbenchTest(const fs::path& report);
+ orbit::RunOutputBuffer outputBuffer;
+ orbit::ConsoleView outputConsole;
+ orbit::ConsoleView terminalConsole;
+ orbit::ProjectTreeIndex projectIndex;
+ bool projectIndexDirty = true;
+ int checkpointGeneration = 0;
+ void flushRunOutput();
+ void clearConsole(bool terminal);
+public:
  HINSTANCE instance{};HWND window{},editor{},output{},termOutput{},searchEdit{},termEdit{},popup{},popupEdit{},popupEdit2{},dimmer{},menuWindow{},tooltip{};
  ComPtr<ID2D1Factory>d2d;ComPtr<IDWriteFactory>dw;ComPtr<IDWriteFontCollection>fontCollection;Paint paint,popupPaint,menuPaint;
  Theme theme;Settings settings;Layout layout;float dpi=96,scale=1;fs::path exeDir,root,dataDir;std::map<std::string,Document>documents;std::vector<std::string>tabs;std::string active,tool="project",panel="run",message="欢迎使用 Orbit。保持专注，创造更多。";

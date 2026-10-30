@@ -1,17 +1,42 @@
 #include "app.h"
 #include <iomanip>
-void App::appendOutput(std::string_view text,bool error){
- if(!output||text.empty())return;auto S=[&](UINT m,uptr_t w=0,sptr_t l=0){return SendMessageW(output,m,w,l);};auto len=S(SCI_GETLENGTH);auto first=S(SCI_GETFIRSTVISIBLELINE),on=S(SCI_LINESONSCREEN),count=S(SCI_GETLINECOUNT);bool bottom=first+on>=count-2;S(SCI_SETREADONLY,FALSE);
- if(len+(sptr_t)text.size()>2*1024*1024){auto end=S(SCI_POSITIONFROMLINE,std::min<sptr_t>(1000,S(SCI_GETLINECOUNT)/2));S(SCI_DELETERANGE,0,end);len=S(SCI_GETLENGTH);}
- S(SCI_ADDTEXT,text.size(),(sptr_t)text.data());int style=error||text.find("Traceback")!=text.npos||text.find("Error:")!=text.npos||text.find("FAILED")!=text.npos?2:text.starts_with("进程已结束，退出代码为 0")?1:text.starts_with("$ ")?3:0;S(SCI_STYLESETFORE,1,rgb(theme.green));S(SCI_STYLESETFORE,2,rgb(theme.red));S(SCI_STYLESETFORE,3,rgb(theme.muted));S(SCI_STARTSTYLING,len);S(SCI_SETSTYLING,text.size(),style);S(SCI_SETREADONLY,TRUE);if(bottom){S(SCI_GOTOPOS,S(SCI_GETLENGTH));S(SCI_SCROLLCARET);}if(running&&lastError.size()<64000)lastError.append(text.data(),text.size());
+void App::appendOutput(std::string_view text, bool error) {
+    if (!output || text.empty()) return;
+    outputConsole.bind(output);
+    const bool failure = error || text.find("Traceback") != text.npos ||
+        text.find("Error:") != text.npos || text.find("FAILED") != text.npos;
+    const int style = failure ? 2 : text.starts_with("进程已结束，退出代码为 0") ? 1 :
+        text.starts_with("$ ") ? 3 : 0;
+    const unsigned foreground = failure ? theme.red : style == 1 ? theme.green :
+        style == 3 ? theme.muted : theme.text;
+    outputConsole.append(text, foreground, style);
+    if (running) {
+        lastError.append(text);
+        if (lastError.size() > 64000) {
+            auto start = lastError.size() - 64000;
+            while (start < lastError.size() && (static_cast<unsigned char>(lastError[start]) & 0xc0) == 0x80) ++start;
+            lastError.erase(0, start);
+        }
+    }
+}
+
+void App::flushRunOutput() {
+    const auto batch = outputBuffer.take();
+    if (!batch.empty()) appendOutput(batch);
+}
+
+void App::clearConsole(bool terminal) {
+    auto& console = terminal ? terminalConsole : outputConsole;
+    console.bind(terminal ? termOutput : output);
+    console.clear();
 }
 void App::run(bool tests,std::string path,std::string inlineCode){
  if(running){toast("程序正在运行，可点击红色按钮停止。");return;}if(path.empty())path=active;if(!tests&&inlineCode.empty()&&(path.empty()||extension(path)!="py")){toast("请选择一个 .py 文件再运行。");return;}
- saveFailed=false;saveAll();auto ready=std::make_shared<std::promise<bool>>();auto future=ready->get_future();io.push([this,ready]{ready->set_value(!saveFailed);});if(runThread.joinable())runThread.join();stopRequested=false;running=true;problems=0;lastError.clear();runLabel=tests?"unittest":inlineCode.empty()?baseName(path).substr(0,baseName(path).find_last_of('.')):"Python";
- SendMessageW(output,SCI_SETREADONLY,FALSE,0);SendMessageW(output,SCI_CLEARALL,0,0);SendMessageW(output,SCI_SETREADONLY,TRUE,0);setPanel("run");appendOutput(tests?"$ python -m unittest discover -s tests -v\n":inlineCode.empty()?"$ python "+path+"\n":"$ python -c …\n");message="Python 正在运行…";auto dir=root;auto interpreter=settings.interpreter;auto stdinText=settings.stdinText;invalidate();
+ saveFailed=false;saveAll();auto ready=std::make_shared<std::promise<bool>>();auto future=ready->get_future();io.push([this,ready]{ready->set_value(!saveFailed);});if(runThread.joinable())runThread.join();stopRequested=false;outputBuffer.reset();running=true;SetTimer(window,6,16,nullptr);problems=0;lastError.clear();runLabel=tests?"unittest":inlineCode.empty()?baseName(path).substr(0,baseName(path).find_last_of('.')):"Python";
+ clearConsole(false);setPanel("run");appendOutput(tests?"$ python -m unittest discover -s tests -v\n":inlineCode.empty()?"$ python "+path+"\n":"$ python -c …\n");message="Python 正在运行…";auto dir=root;auto interpreter=settings.interpreter;auto stdinText=settings.stdinText;invalidate();
  runThread=std::thread([this,dir,path,tests,inlineCode=std::move(inlineCode),interpreter,stdinText,future=std::move(future)]()mutable{
  auto begin=Clock::now();auto result=new RunResult;HANDLE outRead=nullptr,outWrite=nullptr,inRead=nullptr,inWrite=nullptr,job=nullptr;PROCESS_INFORMATION pi{};std::thread inputWriter;
- auto send=[this](std::string text){auto s=new std::string(std::move(text));if(!alive||!PostMessageW(window,WM_ORBIT_OUTPUT,0,(LPARAM)s))delete s;};
+ auto send=[this](std::string_view text){return alive && outputBuffer.write(text);};
  try{
   if(!future.get())throw std::runtime_error("有文件未能保存，本次运行已取消。");if(stopRequested)throw std::runtime_error("运行已停止。");SECURITY_ATTRIBUTES sa{sizeof(sa),nullptr,TRUE};if(!CreatePipe(&outRead,&outWrite,&sa,0)||!CreatePipe(&inRead,&inWrite,&sa,0))throw std::runtime_error("无法创建进程通信管道。");SetHandleInformation(outRead,HANDLE_FLAG_INHERIT,0);SetHandleInformation(inWrite,HANDLE_FLAG_INHERIT,0);
   std::wstring command=quoteArg(interpreter)+L" -u ";if(tests)command+=L"-m unittest discover -s tests -v";else if(!inlineCode.empty())command+=L"-c "+quoteArg(wide(inlineCode));else command+=quoteArg(wide(path));
@@ -21,17 +46,20 @@ void App::run(bool tests,std::string path,std::string inlineCode){
   job=CreateJobObjectW(nullptr,nullptr);JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits{};limits.BasicLimitInformation.LimitFlags=JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;if(!job||!SetInformationJobObject(job,JobObjectExtendedLimitInformation,&limits,sizeof(limits))||!AssignProcessToJobObject(job,pi.hProcess)){TerminateProcess(pi.hProcess,1);throw std::runtime_error("无法为 Python 创建受管理的进程组。");}
   {std::lock_guard guard(processMutex);processJob=job;if(stopRequested)TerminateJobObject(job,1);}ResumeThread(pi.hThread);CloseHandle(outWrite);outWrite=nullptr;CloseHandle(inRead);inRead=nullptr;
   HANDLE inputHandle=inWrite;inWrite=nullptr;inputWriter=std::thread([inputHandle,stdinText]{size_t offset=0;while(offset<stdinText.size()){DWORD wrote=0;if(!WriteFile(inputHandle,stdinText.data()+offset,(DWORD)std::min<size_t>(32768,stdinText.size()-offset),&wrote,nullptr)||!wrote)break;offset+=wrote;}CloseHandle(inputHandle);});
-  char buffer[4096];DWORD count=0;while(ReadFile(outRead,buffer,sizeof(buffer),&count,nullptr)&&count){send(std::string(buffer,count));}WaitForSingleObject(pi.hProcess,INFINITE);GetExitCodeProcess(pi.hProcess,&result->code);
+  char buffer[4096];DWORD count=0;while(ReadFile(outRead,buffer,sizeof(buffer),&count,nullptr)&&count){if(!send(std::string_view(buffer,count)))break;}WaitForSingleObject(pi.hProcess,INFINITE);GetExitCodeProcess(pi.hProcess,&result->code);
  }catch(const std::exception&e){result->code=1;result->error=e.what();}
  if(inputWriter.joinable())inputWriter.join();{std::lock_guard guard(processMutex);processJob=nullptr;if(job)CloseHandle(job);}for(auto h:{outRead,outWrite,inRead,inWrite,pi.hThread,pi.hProcess})if(h)CloseHandle(h);
  result->seconds=std::chrono::duration<double>(Clock::now()-begin).count();if(!alive||!PostMessageW(window,WM_ORBIT_DONE,0,(LPARAM)result))delete result;
  });
 }
-void App::stopRun(){if(!running)return;stopRequested=true;{std::lock_guard guard(processMutex);if(processJob)TerminateJobObject(processJob,1);}message="正在停止运行…";invalidate();}
-void App::runDone(RunResult*raw){std::unique_ptr<RunResult>r(raw);if(runThread.joinable())runThread.join();if(!r->error.empty())appendOutput(r->error+"\n",true);if(stopRequested)appendOutput("\n运行已由用户停止。\n");std::ostringstream line;line<<"\n进程已结束，退出代码为 "<<r->code<<"   ·   "<<std::fixed<<std::setprecision(2)<<r->seconds<<" s\n";appendOutput(line.str(),r->code!=0);running=false;problems=r->code!=0&&!stopRequested?1:0;if(!problems)lastError.clear();message=stopRequested?"运行已停止":r->code==0?"运行成功 · 所有更改已保存":"运行已结束 · 请查看输出";invalidate();}
+void App::stopRun(){if(!running)return;stopRequested=true;outputBuffer.cancel();{std::lock_guard guard(processMutex);if(processJob)TerminateJobObject(processJob,1);}message="正在停止运行…";invalidate();}
+void App::runDone(RunResult*raw){std::unique_ptr<RunResult>r(raw);if(runThread.joinable())runThread.join();KillTimer(window,6);for(auto batch=outputBuffer.take();!batch.empty();batch=outputBuffer.take())appendOutput(batch);if(!r->error.empty())appendOutput(r->error+"\n",true);if(stopRequested)appendOutput("\n运行已由用户停止。\n");std::ostringstream line;line<<"\n进程已结束，退出代码为 "<<r->code<<"   ·   "<<std::fixed<<std::setprecision(2)<<r->seconds<<" s\n";appendOutput(line.str(),r->code!=0);running=false;problems=r->code!=0&&!stopRequested?1:0;if(!problems)lastError.clear();message=stopRequested?"运行已停止":r->code==0?"运行成功 · 所有更改已保存":"运行已结束 · 请查看输出";invalidate();}
 void App::copyOutput(){if(!OpenClipboard(window))return;auto length=(size_t)SendMessageW(output,SCI_GETLENGTH,0,0);std::string s(length+1,0);SendMessageW(output,SCI_GETTEXT,length+1,(LPARAM)s.data());s.resize(length);auto text=wide(s);auto memory=GlobalAlloc(GMEM_MOVEABLE,(text.size()+1)*sizeof(wchar_t));if(memory){auto p=GlobalLock(memory);memcpy(p,text.c_str(),(text.size()+1)*sizeof(wchar_t));GlobalUnlock(memory);EmptyClipboard();if(!SetClipboardData(CF_UNICODETEXT,memory))GlobalFree(memory);}CloseClipboard();toast("输出已复制");}
-void App::terminalAppend(std::string text){SendMessageW(termOutput,SCI_SETREADONLY,FALSE,0);SendMessageW(termOutput,SCI_APPENDTEXT,text.size(),(LPARAM)text.c_str());SendMessageW(termOutput,SCI_SETREADONLY,TRUE,0);SendMessageW(termOutput,SCI_GOTOPOS,SendMessageW(termOutput,SCI_GETLENGTH,0,0),0);}
-void App::terminalCommand(std::string command){command=trim(command);if(command.empty())return;terminalHistory.push_back(command);terminalHistoryIndex=(int)terminalHistory.size();terminalAppend("orbit-python ❯ "+command+"\n");auto space=command.find(' ');auto cmd=command.substr(0,space),arg=space==command.npos?"":trim(command.substr(space+1));if(cmd=="clear"){SendMessageW(termOutput,SCI_SETREADONLY,FALSE,0);SendMessageW(termOutput,SCI_CLEARALL,0,0);SendMessageW(termOutput,SCI_SETREADONLY,TRUE,0);}else if(cmd=="help")terminalAppend("可用命令：\n  ls [目录]               列出项目文件\n  pwd                     显示项目目录\n  cat <相对路径>           查看文件\n  python <文件.py>         运行 Python 文件\n  python -c \"代码\"        执行 Python\n  python -m unittest      运行所有单元测试\n  clear                   清空终端\n\n这是项目命令面板，不是 Windows 系统 Shell。\n");else if(cmd=="pwd")terminalAppend(utf8(root.wstring())+"\n");else if(cmd=="ls"){for(auto&[p,d]:documents)if(arg.empty()||p.starts_with(arg))terminalAppend(p+"\n");}else if(cmd=="cat"){if(documents.contains(arg))try{terminalAppend((arg==active?currentText():readFile(root/fs::u8path(arg)))+"\n");}catch(const std::exception&e){terminalAppend(e.what()+std::string("\n"));}else terminalAppend("文件不存在："+arg+"\n");}else if(cmd=="python"||cmd=="python3"){if(arg.starts_with("-m unittest"))run(true);else if(arg.starts_with("-c ")){auto code=trim(arg.substr(3));if(code.size()>1&&((code.front()=='\"'&&code.back()=='\"')||(code.front()=='\''&&code.back()=='\'')))code=code.substr(1,code.size()-2);run(false,"",code);}else if(documents.contains(arg))run(false,arg);else terminalAppend("用法：python src/main.py 或 python -c \"print(1 + 1)\"\n");}else terminalAppend("未知命令："+cmd+"。输入 help 查看工作区支持的命令。\n");}
+void App::terminalAppend(std::string text) {
+    terminalConsole.bind(termOutput);
+    terminalConsole.append(text, theme.text);
+}
+void App::terminalCommand(std::string command){command=trim(command);if(command.empty())return;terminalHistory.push_back(command);terminalHistoryIndex=(int)terminalHistory.size();terminalAppend("orbit-python ❯ "+command+"\n");auto space=command.find(' ');auto cmd=command.substr(0,space),arg=space==command.npos?"":trim(command.substr(space+1));if(cmd=="clear"){clearConsole(true);}else if(cmd=="help")terminalAppend("可用命令：\n  ls [目录]               列出项目文件\n  pwd                     显示项目目录\n  cat <相对路径>           查看文件\n  python <文件.py>         运行 Python 文件\n  python -c \"代码\"        执行 Python\n  python -m unittest      运行所有单元测试\n  clear                   清空终端\n\n这是项目命令面板，不是 Windows 系统 Shell。\n");else if(cmd=="pwd")terminalAppend(utf8(root.wstring())+"\n");else if(cmd=="ls"){for(auto&[p,d]:documents)if(arg.empty()||p.starts_with(arg))terminalAppend(p+"\n");}else if(cmd=="cat"){if(documents.contains(arg))try{terminalAppend((arg==active?currentText():readFile(root/fs::u8path(arg)))+"\n");}catch(const std::exception&e){terminalAppend(e.what()+std::string("\n"));}else terminalAppend("文件不存在："+arg+"\n");}else if(cmd=="python"||cmd=="python3"){if(arg.starts_with("-m unittest"))run(true);else if(arg.starts_with("-c ")){auto code=trim(arg.substr(3));if(code.size()>1&&((code.front()=='\"'&&code.back()=='\"')||(code.front()=='\''&&code.back()=='\'')))code=code.substr(1,code.size()-2);run(false,"",code);}else if(documents.contains(arg))run(false,arg);else terminalAppend("用法：python src/main.py 或 python -c \"print(1 + 1)\"\n");}else terminalAppend("未知命令："+cmd+"。输入 help 查看工作区支持的命令。\n");}
 int App::selfTest(const fs::path&report){
  json results=json::array();auto check=[&](const char*name,bool ok){results.push_back({{"name",name},{"passed",ok}});};
  check("relative_python_path",validPath("src/main.py"));check("unicode_path",validPath("src/测试.py"));check("reject_parent_escape",!validPath("../outside.py"));check("reject_absolute_path",!validPath("C:/outside.py"));check("reject_empty_component",!validPath("src//main.py"));check("reject_reserved_windows_name",!validPath("src/CON.py"));check("reject_trailing_dot",!validPath("src/a."));check("windows_argument_quote",quoteArg(L"a b")==L"\"a b\"");check("windows_trailing_slash_quote",quoteArg(L"C:\\a b\\")==L"\"C:\\a b\\\\\"");check("unicode_roundtrip",wide(utf8(L"轨道 Orbit ✓"))==L"轨道 Orbit ✓");

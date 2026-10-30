@@ -114,7 +114,7 @@ LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  case WM_COMMAND:if(HIWORD(w)==EN_CHANGE){if((HWND)l==searchEdit){SetTimer(h,2,200,nullptr);}return 0;}break;
  case WM_CTLCOLOREDIT:case WM_CTLCOLORSTATIC:{auto dc=(HDC)w;if((HWND)l==dimmer){SetBkColor(dc,RGB(0,0,0));return (LRESULT)GetStockObject(BLACK_BRUSH);}SetTextColor(dc,rgb(theme.text));SetBkColor(dc,rgb(theme.bg));static HBRUSH dark=CreateSolidBrush(RGB(30,31,34)),light=CreateSolidBrush(RGB(250,249,247));return (LRESULT)(settings.light?light:dark);}
  case WM_NOTIFY:{auto n=(NMHDR*)l;if(n->hwndFrom==editor){changed((SCNotification*)l);return 0;}if(n->code==TTN_GETDISPINFOW){auto t=(NMTTDISPINFOW*)l;t->lpszText=tipText.data();return 0;}break;}
- case WM_TIMER:if(w==1){KillTimer(h,1);saveActive();rebuildSymbols();}else if(w==2){KillTimer(h,2);findProject();}else if(w==3){KillTimer(h,3);toastText.clear();invalidate();}else if(w==4){KillTimer(h,4);complete();}else if(w==5){KillTimer(h,5);RedrawWindow(h,nullptr,nullptr,RDW_INVALIDATE|RDW_ALLCHILDREN|RDW_UPDATENOW);}return 0;
+ case WM_TIMER:if(w==6){flushRunOutput();}else if(w==1){KillTimer(h,1);saveActive();rebuildSymbols();}else if(w==2){KillTimer(h,2);findProject();}else if(w==3){KillTimer(h,3);toastText.clear();invalidate();}else if(w==4){KillTimer(h,4);complete();}else if(w==5){KillTimer(h,5);RedrawWindow(h,nullptr,nullptr,RDW_INVALIDATE|RDW_ALLCHILDREN|RDW_UPDATENOW);}return 0;
  case WM_ORBIT_FILE:fileEvent((FileEvent*)l);return 0;
  case WM_ORBIT_OUTPUT:{std::unique_ptr<std::string>s((std::string*)l);appendOutput(*s);return 0;}
  case WM_ORBIT_DONE:runDone((RunResult*)l);return 0;
@@ -122,7 +122,7 @@ LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  case WM_DROPFILES:{auto drop=(HDROP)w;UINT n=DragQueryFileW(drop,0xffffffff,nullptr,0);for(UINT i=0;i<n;i++){wchar_t p[32768];DragQueryFileW(drop,i,p,32768);if(fs::is_directory(p))scanProject(p);else importFile(p);}DragFinish(drop);return 0;}
  case WM_KEYDOWN:if(key((UINT)w,(GetKeyState(VK_CONTROL)&0x8000)!=0,(GetKeyState(VK_SHIFT)&0x8000)!=0,(GetKeyState(VK_MENU)&0x8000)!=0))return 0;break;
  case WM_CLOSE:finishClose();return 0;
- case WM_DESTROY:quickPick.close();alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
+ case WM_DESTROY:quickPick.close();alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);KillTimer(h,6);outputBuffer.cancel();if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
  }
  return DefWindowProcW(h,m,w,l);
 }
@@ -136,8 +136,8 @@ LRESULT CALLBACK App::EditSubclass(HWND h,UINT m,WPARAM w,LPARAM l,UINT_PTR id,D
 int WINAPI wWinMain(HINSTANCE h,HINSTANCE,LPWSTR command,int show){
  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);App app;
  if(!app.init(h)){MessageBoxW(nullptr,L"无法初始化 Direct2D / Scintilla。请检查安装文件。",L"Orbit IDE",MB_ICONERROR);return 1;}
- std::wstring cmd=command;if(cmd.find(L"--workbench-test")!=cmd.npos){int code=app.workbenchTest(app.exeDir/L"workbench-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
+ std::wstring cmd=command;if(cmd.find(L"--performance-test")!=cmd.npos){int code=app.performanceTest(app.exeDir/L"performance-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--workbench-test")!=cmd.npos){int code=app.workbenchTest(app.exeDir/L"workbench-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
  if(cmd.find(L"--benchmark")!=cmd.npos){app.benchmark(app.exeDir/L"native-benchmark.json");DestroyWindow(app.window);CoUninitialize();return 0;}
  if(cmd.find(L"--integration-test")!=cmd.npos){int code=app.integrationTest(app.exeDir/L"native-integration-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
- ShowWindow(app.window,show);ShowWindow(app.window,SW_SHOW);UpdateWindow(app.window);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){if(msg.message==WM_KEYDOWN||msg.message==WM_SYSKEYDOWN){bool ctrl=GetKeyState(VK_CONTROL)&0x8000,shift=GetKeyState(VK_SHIFT)&0x8000,alt=GetKeyState(VK_MENU)&0x8000;if(!app.popup&&!app.quickPick.isOpen()&&app.key((UINT)msg.wParam,ctrl,shift,alt))continue;}TranslateMessage(&msg);DispatchMessageW(&msg);}for(auto f:app.ownedFonts)DeleteObject(f);CoUninitialize();return (int)msg.wParam;
+ ShowWindow(app.window,show);ShowWindow(app.window,SW_SHOW);UpdateWindow(app.window);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){if(msg.message==WM_KEYDOWN||msg.message==WM_SYSKEYDOWN){bool ctrl=GetKeyState(VK_CONTROL)&0x8000,shift=GetKeyState(VK_SHIFT)&0x8000,alt=GetKeyState(VK_MENU)&0x8000;if(!app.hasTransientPopup()&&app.key((UINT)msg.wParam,ctrl,shift,alt))continue;}TranslateMessage(&msg);DispatchMessageW(&msg);}for(auto f:app.ownedFonts)DeleteObject(f);CoUninitialize();return (int)msg.wParam;
 }

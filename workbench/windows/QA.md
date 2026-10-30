@@ -59,3 +59,7 @@ reference; dirty ones wait for successful saving.
 `qa/native-benchmark.json` 记录约 10 MiB、272,359 行文本的装载与批量插入耗时，以及该基准进程的工作集和私有提交。它测量未启用语法分析的文本内核，不测量 GPU 输入延迟、项目索引耗时或带语言服务的内存，也不是与其他 IDE 的对比跑分。
 
 此次目标是交付性能开销可控的原生前端，并确保既有 Orbit 流程可用；不将选用 C++ 或 GPU 渲染本身当作“性能第一”的证明。
+
+## Second pass: performance and structure
+
+All 108 checks passed: 32 baseline, 37 navigation/editor, 18 integration, and 21 stress checks. The default platform build completed without compiler warnings. See [the measured follow-up](docs/performance-followup.md), `qa/workbench-followup.json`, and `qa/performance-tests.json`.

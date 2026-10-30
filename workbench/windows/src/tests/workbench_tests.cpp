@@ -85,6 +85,11 @@ int App::workbenchTest(const fs::path& report) {
             return pump([&] { return active == path && documents.at(path).loaded && documents.at(path).pointer == sci(SCI_GETDOCPOINTER); });
         };
         check("open_second_native_document", open("src/utils.py"));
+        const auto originalTabIndex = std::find(tabs.begin(), tabs.end(), "src/utils.py") - tabs.begin();
+        closeTab("src/utils.py");
+        reopenClosedTab();
+        const bool tabReopened = pump([&] { return active == "src/utils.py" && documents.at(active).loaded; });
+        check("reopen_restores_original_tab_order", tabReopened && tabs[originalTabIndex] == "src/utils.py");
         gotoLine(7);
         const auto savedLocation = captureEditorLocation();
         open("src/main.py");
@@ -152,6 +157,12 @@ int App::workbenchTest(const fs::path& report) {
         saveSession();
         const auto session = json::parse(readFile(dataDir / L"session.json"));
         check("recent_files_and_view_state_are_persisted", session.contains("recentFiles") && session["editorViews"][active]["caret"] == closedCaret);
+        sci(SCI_APPENDTEXT, 10, reinterpret_cast<sptr_t>("# pending\n"));
+        const auto removedPath = active;
+        deleteFile(removedPath);
+        io.drain();
+        pump([&] { return true; });
+        check("recoverable_delete_cannot_recreate_dirty_closed_file", !fs::exists(root / fs::u8path(removedPath)) && !documents.contains(removedPath));
 
         const std::string sample = "from dataclasses import dataclass\nvalue = sum(range(100))  # navigation timing\n";
         Document large;

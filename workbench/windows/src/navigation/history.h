@@ -12,6 +12,7 @@ namespace orbit {
 struct NavigationLocation {
     std::string path;
     EditorViewState view;
+    int tabIndex = -1;
 };
 
 // UI-independent, bounded state. No document contents or native handles live here.

@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-30",
+  "timezone": "Asia/Shanghai",
+  "passed": true,
+  "checks": 108,
+  "suites": {
+    "native-self-test": 32,
+    "workbench-tests": 37,
+    "native-integration-test": 18,
+    "performance-tests": 21
+  },
+  "warm_10MiB_activation_median_ms": 1.7989,
+  "indexed_tree_projection_median_ms": 1.5068,
+  "performance": {
+    "checkpoint_listing_background_completion_ms": 95.3214,
+    "checkpoint_listing_ui_submit_ms": 0.0127,
+    "direct_3MiB_long_line_append_ms": 7.0331,
+    "multiline_display_bytes_after_4MiB": 1857920,
+    "python_1MiB_output_queue_peak_bytes": 1048576,
+    "python_1MiB_single_line_wall_ms": 35.9316,
+    "tree_20000_files_2000_folders_flatten_samples_ms": [
+      1.2319,
+      1.6092,
+      1.5361,
+      1.4136,
+      1.5068
+    ],
+    "tree_20000_paths_index_build_ms": 9.2162
+  },
+  "scope": "Controlled native application workflows and method timings; not input-to-screen latency. Visible long lines are limited to 16 KiB with a truncation marker."
+}

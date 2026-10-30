@@ -12,6 +12,7 @@ struct QuickPickItem {
     std::wstring detail;
     int line = -1;
     char kind = 'F';
+    int depth = 0;
 };
 
 // Reusable native chooser. It owns its windows, edit font and background brush.

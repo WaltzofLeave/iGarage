@@ -1,0 +1,107 @@
+{
+  "checks": 21,
+  "measurements": {
+    "checkpoint_listing_background_completion_ms": 95.3214,
+    "checkpoint_listing_ui_submit_ms": 0.0127,
+    "direct_3MiB_long_line_append_ms": 7.0331,
+    "multiline_display_bytes_after_4MiB": 1857920,
+    "python_1MiB_output_queue_peak_bytes": 1048576,
+    "python_1MiB_single_line_wall_ms": 35.9316,
+    "tree_20000_files_2000_folders_flatten_samples_ms": [
+      1.2319,
+      1.6092,
+      1.5361,
+      1.4136,
+      1.5068
+    ],
+    "tree_20000_paths_index_build_ms": 9.2162
+  },
+  "passed": true,
+  "results": [
+    {
+      "name": "long_line_has_visible_truncation_marker",
+      "passed": true
+    },
+    {
+      "name": "truncation_resumes_after_newline",
+      "passed": true
+    },
+    {
+      "name": "utf8_incomplete_chunk_is_retained",
+      "passed": true
+    },
+    {
+      "name": "utf8_split_chunks_reassemble",
+      "passed": true
+    },
+    {
+      "name": "line_limit_keeps_utf8_character_boundaries",
+      "passed": true
+    },
+    {
+      "name": "bounded_transport_preserves_all_bytes",
+      "passed": true
+    },
+    {
+      "name": "bounded_transport_applies_backpressure",
+      "passed": true
+    },
+    {
+      "name": "cancel_unblocks_waiting_producer",
+      "passed": true
+    },
+    {
+      "name": "indexed_tree_preserves_all_expanded_rows",
+      "passed": true
+    },
+    {
+      "name": "collapsed_tree_does_not_expand_children",
+      "passed": true
+    },
+    {
+      "name": "tree_orders_folders_first_and_files_case_insensitively",
+      "passed": true
+    },
+    {
+      "name": "native_project_ready",
+      "passed": true
+    },
+    {
+      "name": "performance_project_isolated",
+      "passed": true
+    },
+    {
+      "name": "single_line_cannot_bypass_console_limit",
+      "passed": true
+    },
+    {
+      "name": "multiline_console_has_hard_byte_limit",
+      "passed": true
+    },
+    {
+      "name": "console_never_retains_undo_history",
+      "passed": true
+    },
+    {
+      "name": "real_python_long_output_completes",
+      "passed": true
+    },
+    {
+      "name": "real_python_output_transport_stays_bounded",
+      "passed": true
+    },
+    {
+      "name": "stop_handles_full_output_backpressure",
+      "passed": true
+    },
+    {
+      "name": "legacy_checkpoint_metadata_loads_in_background",
+      "passed": true
+    },
+    {
+      "name": "checkpoint_list_does_not_retain_project_payloads",
+      "passed": true
+    }
+  ],
+  "scope": "Release build, isolated model and native application workflows. Method and hidden-window pipeline measurements; not input-to-screen latency or GPU profiling."
+}
