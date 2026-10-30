@@ -1,0 +1,8 @@
+[project]
+name = "orbit-python"
+version = "0.1.0"
+description = "A little focus. A lot of possibilities."
+requires-python = ">=3.12"
+
+[tool.orbit]
+entry = "src/main.py"

@@ -1,0 +1,14 @@
+* text=auto
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.cpp text eol=lf
+*.cxx text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.ttf binary

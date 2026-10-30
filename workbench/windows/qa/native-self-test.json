@@ -1,0 +1,134 @@
+{
+  "checks": 32,
+  "passed": true,
+  "results": [
+    {
+      "name": "relative_python_path",
+      "passed": true
+    },
+    {
+      "name": "unicode_path",
+      "passed": true
+    },
+    {
+      "name": "reject_parent_escape",
+      "passed": true
+    },
+    {
+      "name": "reject_absolute_path",
+      "passed": true
+    },
+    {
+      "name": "reject_empty_component",
+      "passed": true
+    },
+    {
+      "name": "reject_reserved_windows_name",
+      "passed": true
+    },
+    {
+      "name": "reject_trailing_dot",
+      "passed": true
+    },
+    {
+      "name": "windows_argument_quote",
+      "passed": true
+    },
+    {
+      "name": "windows_trailing_slash_quote",
+      "passed": true
+    },
+    {
+      "name": "unicode_roundtrip",
+      "passed": true
+    },
+    {
+      "name": "layout_640x550",
+      "passed": true
+    },
+    {
+      "name": "layout_640x900",
+      "passed": true
+    },
+    {
+      "name": "layout_640x1080",
+      "passed": true
+    },
+    {
+      "name": "layout_800x550",
+      "passed": true
+    },
+    {
+      "name": "layout_800x900",
+      "passed": true
+    },
+    {
+      "name": "layout_800x1080",
+      "passed": true
+    },
+    {
+      "name": "layout_960x550",
+      "passed": true
+    },
+    {
+      "name": "layout_960x900",
+      "passed": true
+    },
+    {
+      "name": "layout_960x1080",
+      "passed": true
+    },
+    {
+      "name": "layout_1280x550",
+      "passed": true
+    },
+    {
+      "name": "layout_1280x900",
+      "passed": true
+    },
+    {
+      "name": "layout_1280x1080",
+      "passed": true
+    },
+    {
+      "name": "layout_1440x550",
+      "passed": true
+    },
+    {
+      "name": "layout_1440x900",
+      "passed": true
+    },
+    {
+      "name": "layout_1440x1080",
+      "passed": true
+    },
+    {
+      "name": "layout_1920x550",
+      "passed": true
+    },
+    {
+      "name": "layout_1920x900",
+      "passed": true
+    },
+    {
+      "name": "layout_1920x1080",
+      "passed": true
+    },
+    {
+      "name": "focus_mode_reclaims_panels",
+      "passed": true
+    },
+    {
+      "name": "web_project_json_compatibility",
+      "passed": true
+    },
+    {
+      "name": "native_editor_registered",
+      "passed": true
+    },
+    {
+      "name": "private_ui_font_collection",
+      "passed": true
+    }
+  ]
+}

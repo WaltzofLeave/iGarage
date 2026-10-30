@@ -1,0 +1,24 @@
+# Generated application, local projects and session state
+/app/
+/build/
+
+# Vendored libraries are rebuilt from source
+/vendor/scintilla/bin/
+/vendor/scintilla/win32/obj/
+/vendor/lexilla/bin/
+/vendor/lexilla/src/obj/
+
+# Compiler and editor artifacts
+*.obj
+*.iobj
+*.ipdb
+*.pdb
+*.ilk
+*.exp
+*.exe
+*.dll
+*.lib
+*.pyc
+__pycache__/
+.vs/
+.vscode/

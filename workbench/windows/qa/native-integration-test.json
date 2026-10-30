@@ -1,0 +1,79 @@
+{
+  "checks": 18,
+  "passed": true,
+  "results": [
+    {
+      "name": "open_project_async",
+      "passed": true
+    },
+    {
+      "name": "new_file_and_tab",
+      "passed": true
+    },
+    {
+      "name": "utf8_edit_and_disk_save",
+      "passed": true
+    },
+    {
+      "name": "tab_switch_preserves_undo",
+      "passed": true
+    },
+    {
+      "name": "run_local_python_multifile",
+      "passed": true
+    },
+    {
+      "name": "project_search_async",
+      "passed": true
+    },
+    {
+      "name": "checkpoint_preserves_editor_document",
+      "passed": true
+    },
+    {
+      "name": "checkpoint_restore_and_backup",
+      "passed": true
+    },
+    {
+      "name": "web_compatible_project_export",
+      "passed": true
+    },
+    {
+      "name": "rename_updates_document_and_disk",
+      "passed": true
+    },
+    {
+      "name": "unittest_four_cases",
+      "passed": true
+    },
+    {
+      "name": "runtime_error_in_problems_panel",
+      "passed": true
+    },
+    {
+      "name": "stop_infinite_loop",
+      "passed": true
+    },
+    {
+      "name": "standard_input",
+      "passed": true
+    },
+    {
+      "name": "bidirectional_pipe_backpressure",
+      "passed": true
+    },
+    {
+      "name": "word_wrap_setting",
+      "passed": true
+    },
+    {
+      "name": "light_theme_updates_editor",
+      "passed": true
+    },
+    {
+      "name": "recoverable_delete",
+      "passed": true
+    }
+  ],
+  "scope": "Isolated real document, disk, search, checkpoint and local Python workflows. Visual verification is recorded separately."
+}

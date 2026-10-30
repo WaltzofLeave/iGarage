@@ -1,0 +1,11 @@
+{
+  "configuration": "MSVC x64 Release /O2 /GL /LTCG /MT",
+  "document_bytes": 10485783,
+  "document_lines": 272359,
+  "editor": "Scintilla 5.6.7 / DirectWrite",
+  "insert_1000_characters_ms": 9.3854,
+  "note": "Synthetic editor-core timings, not end-to-end keystroke latency. Includes the synthetic 10 MiB document and undo data. Python is not running.",
+  "private_commit_MiB": 59.91796875,
+  "set_text_10MiB_ms": 8.3694,
+  "working_set_MiB": 64.96484375
+}

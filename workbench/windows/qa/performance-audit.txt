@@ -1,0 +1,88 @@
+Orbit Native Windows 性能审计
+审计日期：2026-10-30（Asia/Shanghai）
+当前 Windows C++/Win32/Direct2D/Scintilla 原生版；不包含浏览器网页版本。审计未修改生产源码、可执行文件或下载包。
+
+结论：发现 5 项 P1、4 项 P2。最明显瓶颈是长单行输出的 UI 线程处理。
+发布版二进制 SHA-256：147730ed3fb60604f155ca7026a3f7fd1b7317ae9d497941944e6e15e36a615c
+
+实测环境：Windows 11 / Ryzen 7 9800X3D / 150% 缩放 / x64 Release。
+大多数方法耗时为 3 次温缓存中位数；方法计时不等于真实点击到屏幕延迟。
+可见发布进程的 10 秒空闲样本消耗约 31 ms CPU，未发现持续忙循环。
+
+PERF-01 [P1] 无换行运行输出反复定位文末，且输出内存上限不可靠
+证据：真实 Python 写出 1 MiB 单行文本：后台运行线程约 30.7 ms；UI 输出处理累计约 7411 ms，完成操作约 7509 ms；256 条输出消息，单条处理最长约 61.3 ms。SCI_GOTOPOS 累计约 7401 ms，占该 UI 输出处理耗时 99.87%。仅关闭自动换行的对照仍约 7462 ms。直接追加 3 MiB 无换行文本后显示缓冲为 3 MiB，超过标称 2 MiB；再追加仍增长。6 MiB 多行输出被截至约 1.97 MiB，但撤销历史还保存 10,515,456 字节文本。
+原因：每次读取至多 4096 字节便单独 PostMessage；每条消息追加后调用 SCI_GOTOPOS 定位文末并确保光标可见。细分计时确认耗时主要落在此调用；仅关闭自动换行的对照没有改善。截断按前若干行计算，单行时删除长度为零。输出控件仍启用撤销记录；缺少有界队列与 UI 批量刷新预算。
+建议：优先移除逐块文末光标定位，用合并通知和有界缓冲按预算批量追加、更新垂直视口；只读输出关闭撤销；同时按字节和行数硬限额并处理 UTF-8 边界；对超长单行设置明确的显示截断策略。完整日志可另存，截断或丢弃必须可见。
+范围：隐藏但已初始化的原生窗口，真实 Python 进程与正常消息分发；不是屏幕端到端延迟。3 MiB 单次追加用于确定性验证截断逻辑；正常 4 KiB 管道路径另外实测了 1 MiB。
+Source: workbench/windows/src\runtime.cpp:3；workbench/windows/src\runtime.cpp:14；workbench/windows/src\runtime.cpp:24；workbench/windows/src\main.cpp:110
+
+PERF-02 [P1] 已加载文档重新激活时仍同步全量着色
+证据：预加载缓存后重复激活同一 Python 文档，3 次中位数：1 MiB 24.9 ms，10 MiB 88.2 ms，32 MiB 275.7 ms；其中全量 styleEditor 分别约 9.94、84.41、268.84 ms。
+原因：activateDoc 每次调用 styleEditor，重设 lexer 并执行 SCI_COLOURISE(0, -1)。大文件仅停用结构与补全，仍进行全量语法处理。
+建议：把文档激活和样式初始化拆开，按文档版本/lexer/主题版本缓存；未变化文档只切换已有状态；增量或空闲着色，大文件优先可见区域并限制同步工作。
+范围：文件缓存预先生成，计时不含磁盘读取、用户点击或屏幕呈现；因此完整打开耗时可能更高。
+Source: workbench/windows/src\workspace.cpp:18；workbench/windows/src\main.cpp:61；workbench/windows/src\main.cpp:69
+
+PERF-03 [P1] 展开的项目树按目录重复扫描全部文件
+证据：合成路径集合，3 次中位数：1000 文件/100 展开目录约 0.86 ms；5000/500 约 15.95 ms；20000/2000 约 300.03 ms。同一 20000 文件集合折叠子目录时约 3.86 ms。
+原因：每个展开目录遍历 documents 全集，复杂度随文件数与展开目录数相乘；激活文件也会重建树。
+建议：扫描后建立目录到子项的索引，重建/排序仅处理变化分支；活动文件变化只更新选中状态；可见行扁平化与绘制分离。
+范围：测量项目树构建方法，路径集合在内存中，不含磁盘扫描。300 ms 对应 2000 个目录全部展开，不能套用于普通折叠项目。
+Source: workbench/windows/src\workspace.cpp:11；workbench/windows/src\workspace.cpp:20；workbench/windows/src\interaction.cpp:12
+
+PERF-04 [P1] 关闭标签仍无上限保留文档和文本副本
+证据：隔离进程打开四个约 8 MiB 文档，关闭全部标签后仍保留四个 Scintilla 文档指针和约 32 MiB cache；私有提交仍约 138.48 MiB。手动释放测试文档的对照降至约 6.48 MiB。
+原因：closeTab 只移除 tabs，未释放 Document.pointer/cache；所有访问过的文件一直驻留到切换项目或退出。文本、样式和撤销数据另占内存。
+建议：保存完成后释放已关闭且干净的文档，或使用按字节预算控制的 LRU 缓存；需要保留撤销历史时也必须设置预算。
+范围：这是缺少预算的缓存保留，不是不可达内存泄漏。隐藏诊断进程的绝对内存值不能直接与可见应用的 GPU/窗口开销比较。
+Source: workbench/windows/src\workspace.cpp:22；workbench/windows/src\core.h:71；workbench/windows/src\workspace.cpp:19
+
+PERF-05 [P1] 版本列表在 UI 线程读入全部检查点正文
+证据：每个检查点包含约 1 MiB 项目正文，3 次中位数：10 个版本约 78.2 ms，50 个版本约 370.0 ms，最终仅显示/保留 10 个。
+原因：listCheckpoints 同步读取并 JSON 解析全部快照，排序后才裁至 10 个；项目载入、创建检查点和切换版本栏都会调用。
+建议：异步读取独立元数据索引，先选定所需版本；恢复时再加载具体正文。避免列表常驻十份完整项目副本。
+范围：本机 SSD 和已写入文件的温缓存测试；没有测网络盘、慢磁盘或更大的实际项目快照。
+Source: workbench/windows/src\workspace.cpp:61；workbench/windows/src\workspace.cpp:41；workbench/windows/src\interaction.cpp:2
+
+PERF-06 [P2] 小区域更新仍提交完整工作台重绘
+证据：源码中的 WM_PAINT 不使用 ps.rcPaint 限定 Direct2D 渲染，render 绘制完整工作台，Present1 也标记完整客户区。初始化隐藏窗口的 100 帧测试每帧 104 次文本绘制、17 次路径几何创建；CPU 绘制/提交中位数约 1.40 ms。
+原因：光标/选择更新使状态栏和滚动条失效，但这些状态未与完整工作台绘制解耦。静态图标路径每帧重新创建。文本格式已经缓存，不能误报为每次创建字体格式。
+建议：按区域维护失效与缓存，分开状态栏/滚动条更新；复用静态图标几何和合适的文本布局。优先修复 P1 后再以帧数据确认收益。
+范围：隐藏窗口的绘制/提交计时不是可见帧率、GPU 完成时间或输入到屏幕延迟；该环境 GetUpdateRect 返回空，相关字段不用于下结论。
+Source: workbench/windows/src\workspace.cpp:28；workbench/windows/src\main.cpp:96；workbench/windows/src\view.cpp:6；workbench/windows/src\paint.cpp:33；workbench/windows/src\paint.cpp:42
+
+PERF-07 [P2] 多个 UI 命令同步等待单一 I/O 队列
+证据：saveSession 20 次温缓存写入中位数约 1.41 ms；给 I/O worker 注入 300 ms 等待后，调用线程上的 drain 等待约 312 ms。
+原因：扫描、读写、项目导出和检查点共用 FIFO 队列；重命名、删除、导入、恢复及退出在 UI 线程 drain。会话保存还同步原子写盘。
+建议：用完成消息推进后续状态，避免 UI 同步 drain；会话保存合并并放到后台；对队列内较重任务设置优先级和取消机制。
+范围：300 ms 为刻意注入的 worker 忙碌时间，仅证明阻塞传播，不是磁盘或导出任务的实测耗时。
+Source: workbench/windows/src\core.h:69；workbench/windows/src\workspace.cpp:6；workbench/windows/src\workspace.cpp:52；workbench/windows/src\workspace.cpp:53；workbench/windows/src\workspace.cpp:54；workbench/windows/src\workspace.cpp:62；workbench/windows/src\workspace.cpp:65
+
+PERF-08 [P2] 弹窗字体对象直到应用退出才释放
+证据：setEditFont 每次 CreateFontW 并把句柄加入 ownedFonts；输入弹窗创建时调用，closePopup 只销毁窗口，不移除或释放字体；主循环结束后才统一 DeleteObject。
+原因：字体对象没有按参数缓存，也没有与所属控件生命周期配对。长期反复打开输入弹窗会积累 GDI 对象。
+建议：按字体、字号与 DPI 复用字体句柄，或在控件不再使用字体后按拥有关系释放。
+范围：源码确认的生命周期问题；本次没有进行大量弹窗循环实测，不宣称已测得具体句柄增长速度或崩溃阈值。
+Source: workbench/windows/src\main.cpp:35；workbench/windows/src\interaction.cpp:46；workbench/windows/src\interaction.cpp:51；workbench/windows/src\main.cpp:133
+
+PERF-09 [P2] 搜索取消粒度与辅助分析仍有扩展性开销
+证据：搜索有 200 ms 防抖、后台队列和 150 条结果限制，但仅在文件边界检查取消；文件内容读取后才遍历行。结构分析在 600 ms 输入停顿后同步复制/扫描全文，且先复制文本再检查 2 MiB 上限；补全逐词分配小写副本并重复转换前缀。
+原因：详见源码及原始数据。
+建议：按数据块/行检查取消；分析先读长度、对变更范围或后台快照处理；词表预处理大小写并采用前缀索引。
+范围：搜索队列与高唯一词表场景没有专项吞吐实测。不能据此给出搜索延迟数值。
+Source: workbench/windows/src\workspace.cpp:45；workbench/windows/src\workspace.cpp:47；workbench/windows/src\workspace.cpp:49；workbench/windows/src\main.cpp:108
+
+测量边界：
+- 未做 ETW/WPA CPU 调用栈采样或 GPU profiler 分析；方法边界使用 steady_clock 计时。
+- 没有测量真实键入到屏幕呈现的 P50/P95/P99。
+- 除渲染 100 次、会话写入 20 次外，方法计时多数为 3 次温缓存样本；输出与内存场景为单次受控复现。
+- 此前 10 MiB 约 8 ms 的测试只测未启用 lexer 的文本内核，不是完整文档打开或标签激活性能。
+- 不同机器、显示器、驱动、磁盘、超大项目与搜索吞吐尚未覆盖。
+- 功能检查通过不能代替性能验收；本次仅审计，尚未实施上述修复。
+
+建议修复顺序：
+1. 输出合并、预算与硬上限，同时禁用输出撤销
+2. 缓存文档样式与释放关闭文档
+3. 索引目录树与异步检查点元数据
+4. 移除 UI 线程阻塞等待和减少重绘
+5. 建立真实输入延迟、热文档激活、长输出与长会话内存的回归门槛
