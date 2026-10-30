@@ -9,7 +9,7 @@
 3. 点击绿色运行按钮或按 Shift+F10 运行示例。烧瓶按钮运行 4 项 unittest 测试。
 4. 若 Python 不在 PATH 中，在「运行 → Python 解释器」选择本地 `python.exe`，也可选择 `.venv/Scripts/python.exe`。
 
-适用 Windows 10/11 x64；示例项目使用 Python 3.12。C++ 运行库静态链接，无需安装 Visual Studio 即可运行。
+适用 Windows 10 1703 或更新版本、Windows 11 x64；示例项目使用 Python 3.12。C++ 运行库静态链接，无需安装 Visual Studio 即可运行。
 
 首次启动会把 `sample-project/` 复制为程序旁的 `orbit-python/`。项目编辑自动写回磁盘，设置保存在 `data/session.json`。可通过「文件 → 打开项目文件夹」切换项目。
 
@@ -114,3 +114,20 @@ worker and keeps metadata only; restoration loads the selected snapshot separate
 Run `app\OrbitNative.exe --performance-test` for stress checks, cancellation,
 UTF-8 boundaries, memory limits, and recorded method-level timings. See
 [the measured follow-up](docs/performance-followup.md) and `qa/performance-tests.json`.
+
+## Icons and folding controls
+
+File types, folders, symbols, tool windows, tabs and pickers use a shared native
+icon registry. Folding uses the official small 9×9 chevrons while retaining a
+13 DIP click area. SVGs are rasterized once per size/theme/color and cached as
+GPU bitmaps; the application does not fetch icons from the network.
+
+104 original SVG files carry explicit Apache-2.0 notices. The unaltered official
+Python logo is used only for file/interpreter identification under the PSF's
+published permission for commercial and non-commercial compatibility uses.
+Licenses, notices, pinned source URLs and SHA-256 hashes ship with the program.
+See [the asset review](docs/icon-sources.md). The Python logo is not relicensed
+under Apache-2.0, and no JetBrains/PyCharm product branding is included.
+
+Run `python tools/check_icon_licenses.py` for the offline asset gate and
+`app\OrbitNative.exe --icon-test` for native SVG/DPI/folding/cache checks.

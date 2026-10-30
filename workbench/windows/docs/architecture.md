@@ -13,6 +13,7 @@ not hold Windows handles or editor text; the host adapts that state to Scintilla
 | `src/editor/commands.*` | Editor-only line/selection operations, grouped for undo. |
 | `src/editor/text_format.h` | Newline detection without rewriting existing content. |
 | `src/ui/quick_pick.*` | Reusable native filtered list. Owns its popup, input font, brush, and rendering resources. |
+| `src/ui/icons.*` | Typed asset registry, file/symbol mappings, licensed SVG loading, bounded shared GPU bitmap cache and Scintilla fold images. |
 | `src/runtime/output_buffer.*` | UI-independent bounded transport, cancellation, and UTF-8-safe line display limits. |
 | `src/runtime/console_view.*` | Non-owning Scintilla console adapter: bounded display, styles, viewport following, and disabled undo. |
 | `src/workspace/project_tree.*` | UI-independent directory membership index and visible-row projection. |
@@ -37,6 +38,11 @@ not hold Windows handles or editor text; the host adapts that state to Scintilla
   Scintilla, with remaining styling scheduled for idle time.
 - Outline analysis is revision-cached and pauses above 2 MiB. The length budget
   is checked before creating a text snapshot.
+- The graphics device owns a shared icon atlas. Popups reuse it; device loss
+  invalidates it. Sources load once, and the GPU cache holds at most 256 bitmap
+  variants. Only fold markers normally need CPU RGBA copies. Theme and physical
+  pixel size are cache keys, so DPI changes do not stretch an old low-resolution
+  icon. Provenance and license validation remain an offline tool responsibility.
 
 ## Extending the workbench
 

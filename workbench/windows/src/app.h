@@ -16,6 +16,7 @@ class App{
 public:
  int workbenchTest(const fs::path& report);
  int performanceTest(const fs::path& report);
+ int iconTest(const fs::path& report);
  bool hasTransientPopup() const { return popup || quickPick.isOpen(); }
 
 private:

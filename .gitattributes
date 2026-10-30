@@ -12,3 +12,4 @@
 *.jpg binary
 *.ico binary
 *.ttf binary
+workbench/windows/assets/icons/*.svg -text

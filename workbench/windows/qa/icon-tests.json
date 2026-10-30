@@ -1,0 +1,58 @@
+{
+  "checks": 10,
+  "details": {
+    "empty_or_wrong_size_icons": [],
+    "python_blue_yellow_pixel_counts": [
+      512,
+      520
+    ],
+    "rasterizations": 346,
+    "rendered_variants": 330,
+    "source_loads": 106,
+    "warm_10000_lookup_ms": 0.1385,
+    "warm_lookup_scope": "CPU cache access only; not GPU draw or input-to-screen timing."
+  },
+  "passed": true,
+  "results": [
+    {
+      "name": "every_icon_renders_in_both_themes_at_100_150_200_percent",
+      "passed": true
+    },
+    {
+      "name": "official_python_gradients_render_as_blue_and_yellow",
+      "passed": true
+    },
+    {
+      "name": "fold_markers_are_narrow_open_strokes_without_triangle_top_edge",
+      "passed": true
+    },
+    {
+      "name": "file_types_and_symbols_share_consistent_real_icons",
+      "passed": true
+    },
+    {
+      "name": "warm_icon_lookups_do_not_read_files_or_parse_or_rasterize_svg",
+      "passed": true
+    },
+    {
+      "name": "gpu_icon_cache_is_bounded",
+      "passed": true
+    },
+    {
+      "name": "native_fold_markers_use_rgba_instead_of_default_triangles",
+      "passed": true
+    },
+    {
+      "name": "fold_click_target_keeps_13_DIP_width_and_sensitivity",
+      "passed": true
+    },
+    {
+      "name": "native_fold_expand_and_contract_still_hide_and_show_code",
+      "passed": true
+    },
+    {
+      "name": "theme_switch_reloads_the_correct_native_fold_marker_variant",
+      "passed": true
+    }
+  ]
+}

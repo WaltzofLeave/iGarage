@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-30",
+  "passed": true,
+  "checks": 118,
+  "suites": {
+    "native-self-test": 32,
+    "workbench-tests": 37,
+    "native-integration-test": 18,
+    "performance-tests": 21,
+    "icon-tests": 10
+  },
+  "license_review": {
+    "passed": true,
+    "svg_files": 105,
+    "apache_2_0_files": 104,
+    "psf_permitted_original_logo": 1,
+    "excluded_unlicensed_candidates": 6,
+    "checks": [
+      "sha256",
+      "per-file license",
+      "commercial-use permission",
+      "official source",
+      "complete license and notices",
+      "no unlisted assets",
+      "no external SVG resources"
+    ]
+  },
+  "icon_rendering": {
+    "empty_or_wrong_size_icons": [],
+    "python_blue_yellow_pixel_counts": [
+      512,
+      520
+    ],
+    "rasterizations": 346,
+    "rendered_variants": 330,
+    "source_loads": 106,
+    "warm_10000_lookup_ms": 0.1385,
+    "warm_lookup_scope": "CPU cache access only; not GPU draw or input-to-screen timing."
+  },
+  "folding": {
+    "artwork_DIP": [
+      9,
+      9
+    ],
+    "click_width_DIP": 13,
+    "font_DIP": 13,
+    "line_height_DIP": 20
+  },
+  "visual_checks": [
+    "live PyCharm fold controls, inspected read-only",
+    "Orbit dark and light at actual 150% DPI",
+    "expand and collapse in native code gutter",
+    "project/file icons, tabs, breadcrumb, toolbar, symbols",
+    "Recent Files and searchable file structure",
+    "sample Python execution"
+  ],
+  "binary_sha256": "2a564b838ced053489d6b4e5d6139c7c3452788f87c43c722814702b0e9a9cf4",
+  "build": "MSVC x64 /W4 /O2 /GL /LTCG /MT; application build completed without warnings.",
+  "scope": "100% and 200% icon checks are offscreen native raster tests. Warm lookup timing excludes GPU draw and input-to-screen latency."
+}

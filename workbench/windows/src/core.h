@@ -31,6 +31,7 @@
 #include "../vendor/scintilla/include/Scintilla.h"
 #include "../vendor/lexilla/include/SciLexer.h"
 #include "editor/document.h"
+#include "ui/icons.h"
 namespace fs=std::filesystem;
 using json=nlohmann::json;
 using Microsoft::WRL::ComPtr;
@@ -74,12 +75,12 @@ struct FileEvent{std::string path,text,error;uint64_t revision=0;bool load=false
 constexpr UINT WM_ORBIT_FILE=WM_APP+1,WM_ORBIT_OUTPUT=WM_APP+2,WM_ORBIT_DONE=WM_APP+3,WM_ORBIT_SEARCH=WM_APP+4;
 struct RunResult{DWORD code=0;double seconds=0;std::string error;};
 struct SearchResult{int generation=0;std::vector<SearchHit>hits;};
-enum class Icon{Folder,Search,Branch,Play,Terminal,Settings,Chevron,Down,Close,Plus,More,File,Check,Stop,Refresh,Layout,Structure,Download,Upload,Help,Maximize,Trash,Flask,Clock,Book,Sun,Save,Minimize,Restore};
 struct Hit{D2D1_RECT_F box;std::string action,data;int index=0;std::wstring tip;};
 struct Paint{
  ComPtr<ID2D1RenderTarget>rt;ComPtr<ID2D1DeviceContext>context;ComPtr<IDXGISwapChain1>swapChain;ComPtr<ID2D1Bitmap1>backBuffer;ComPtr<ID2D1SolidColorBrush>brush;ComPtr<IDWriteFactory>dw;ComPtr<IDWriteFontCollection>fonts;std::map<std::pair<int,int>,ComPtr<IDWriteTextFormat>>formats;
- HWND hwnd=nullptr;float dpi=96;
+ std::shared_ptr<orbit::IconAtlas> icons;
+ HWND hwnd=nullptr;float dpi=96;bool light=false;
  float measure(std::wstring_view s,float size=9,bool mono=true);
  bool init(HWND window,ID2D1Factory*d2d,IDWriteFactory*dwrite,IDWriteFontCollection*collection,float Dpi);
- void begin();void end();void resize();void release();void fill(D2D1_RECT_F r,unsigned c,float a=1);void round(D2D1_RECT_F r,unsigned c,float radius=4);void line(float x,float y,float xx,float yy,unsigned c,float thickness=1);void dot(float x,float y,float radius,unsigned c);void outline(D2D1_RECT_F r,unsigned c,float radius=4);void text(std::wstring_view s,D2D1_RECT_F r,unsigned c,float size=12,int weight=400,int alignment=0,bool mono=false);void icon(Icon i,float x,float y,float size,unsigned c);void logo(float x,float y,float size,unsigned c);
+ void begin(bool lightTheme=false);void end();void resize();void release();void fill(D2D1_RECT_F r,unsigned c,float a=1);void round(D2D1_RECT_F r,unsigned c,float radius=4);void line(float x,float y,float xx,float yy,unsigned c,float thickness=1);void dot(float x,float y,float radius,unsigned c);void outline(D2D1_RECT_F r,unsigned c,float radius=4);void text(std::wstring_view s,D2D1_RECT_F r,unsigned c,float size=12,int weight=400,int alignment=0,bool mono=false);void icon(Icon i,float x,float y,float size,unsigned c);void logo(float x,float y,float size,unsigned c);
 };

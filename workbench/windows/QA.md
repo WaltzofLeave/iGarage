@@ -63,3 +63,31 @@ reference; dirty ones wait for successful saving.
 ## Second pass: performance and structure
 
 All 108 checks passed: 32 baseline, 37 navigation/editor, 18 integration, and 21 stress checks. The default platform build completed without compiler warnings. See [the measured follow-up](docs/performance-followup.md), `qa/workbench-followup.json`, and `qa/performance-tests.json`.
+
+## 2026-10-30: folding arrows and licensed icons
+
+All 118 native checks passed: the previous 108 plus 10 icon/rendering/folding/cache
+checks in `qa/icon-tests.json`. The updated application compiled without warnings.
+The offline provenance gate passed for all 105 imported SVG files; its report is
+`qa/icon-license-check.json`. Complete permissions, exceptions and pinned sources
+are documented in [the asset review](docs/icon-sources.md).
+
+The live PyCharm window was inspected read-only. Its small open chevrons differ
+from Scintilla's original wide outlined triangles. The replacement uses the
+official 9×9 fold/unfold artwork, with the original 13 DIP margin and click area.
+Both folding states were exercised in the actual Orbit window. The code font and
+20 DIP target line height remain unchanged.
+
+At the current 150% display scale, the running application was checked in dark and
+light themes: project/file types, tabs, breadcrumb, interpreter selector, structure
+symbols, toolbar and Recent Files picker. The old text placeholders are replaced
+consistently. Screenshots are `qa/icons-main.png`, `qa/icons-folded.png`,
+`qa/icons-light.png`, `qa/icons-recent.png` and `qa/icons-outline.png`.
+PyCharm's private project contents are not included in the repository screenshots.
+
+The native SVG tests additionally render 330 registered icon/theme/scale variants
+at 100%, 150% and 200%, verify Python's blue/yellow artwork, and check arrow alpha
+bounds, actual native folding and warmed cache reuse. The 100% and 200% checks are
+offscreen raster tests, not physical-monitor visual coverage. The cache lookup
+timing in the report measures CPU access only; it is not GPU latency or an IDE
+performance comparison.

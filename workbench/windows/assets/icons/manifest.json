@@ -1,0 +1,966 @@
+{
+  "schema": 1,
+  "reviewed_at": "2026-10-30",
+  "upstream_commit": "885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b",
+  "jetbrains_gallery": "https://intellij-icons.jetbrains.design/",
+  "jetbrains_license_statement": "https://blog.jetbrains.com/platform/2024/08/more-new-ui-icons-for-your-plugins/",
+  "policy": "Only per-file explicit Apache-2.0 assets, plus the unaltered official Python logo for the PSF-permitted identification use.",
+  "excluded_candidates": [
+    "fileTypes/c.svg",
+    "fileTypes/c_dark.svg",
+    "fileTypes/cpp.svg",
+    "fileTypes/cpp_dark.svg",
+    "fileTypes/h.svg",
+    "fileTypes/h_dark.svg"
+  ],
+  "exclusion_reason": "No explicit per-file license header in the reviewed version; not imported.",
+  "assets": [
+    {
+      "file": "book.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/documentation.svg",
+      "sha256": "d6b5772365f96897f2a836349cf8728c99cbfb2e12ea297f53ef298f4cf1f360",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2025 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "book_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/documentation_dark.svg",
+      "sha256": "9abe3f6196c3e7d0d9de170cb302a71e54207f57bccd72e1e7f97f67480eada6",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2025 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "branch.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/vcs.svg",
+      "sha256": "7b04f37b0404b705f155b3e0bb7f34f96996ea308fa6c51bbbe63669cebbb691",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "branch_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/vcs_dark.svg",
+      "sha256": "7032ef8619375600e6beb5bb1c3857822d08b51a840eb2f63ac5329a51ed5c11",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "check.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/actions/checked.svg",
+      "sha256": "32f1b1562a36f4d26e2a04c874e4cd13acdc1f2668a85d8a7d6cca130d3121cf",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "check_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/actions/checked_dark.svg",
+      "sha256": "5b95a6eee80202ea3d97c6f84a1bce62fcabc4d3fa0e7c2f5f2356a8801a1fac",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "chevron-down.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/chevronDown.svg",
+      "sha256": "8cc414b79234c71b263f65b11fc71e429411ce13512862add9ccef60264c1c34",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "chevron-down_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/chevronDown_dark.svg",
+      "sha256": "2002c988353dc8d3e4044ddc34ec062366c4c1b4307a5e135478ac44694ea30b",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "chevron-right.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/chevronRight.svg",
+      "sha256": "6dc8f3b872ec8b3ce7037e9f2adc40a393449ab88820a7efa9c683fba78c1d98",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "chevron-right_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/chevronRight_dark.svg",
+      "sha256": "bae1f68b729b1eab1ab2e6ce35033b71cdb52b3677fb90ac8aef286c7be68595",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "class.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/class.svg",
+      "sha256": "7ee202d58f92bfab68c5f45abbc30afa04eee572ebcd163ceb1eab973f2cc5c5",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "class_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/class_dark.svg",
+      "sha256": "b4d51084e4bce6f5c7385c4f80cdd46ca4c5c259bfec48776ef3a76224c235ed",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "clock.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/history.svg",
+      "sha256": "3687db5c7bc3938f72cbe387259ec26e6ce5de05b86ab5e2c57f2361bea59e0d",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "clock_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/history_dark.svg",
+      "sha256": "5ea7471acbc1951d8309be78160bd6fe8bb83c9929c81415789acadd1dacea63",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "close.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/closeSmall.svg",
+      "sha256": "a4cf038384cb91265c76bbfe2d94bb711864924bf112ad9a62daa9dba72e4515",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "close_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/closeSmall_dark.svg",
+      "sha256": "9d66fb068dca705b3e6342c23c27614837eeafefe1c38097dd64131ec3aa3c27",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "config.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/config.svg",
+      "sha256": "e7990632f5a4caa8258b1c97d8efe5e296fb162c209af712e725dfc876839395",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "config_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/config_dark.svg",
+      "sha256": "da243a31cedd55334263086e17c1ee4264a93771e64c0e27b91b6c6daaa1bd46",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "css.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/css.svg",
+      "sha256": "422c5512c70808e0f61191a4279749301a7296c6082a3f001d397f0e2ec93590",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "css_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/css_dark.svg",
+      "sha256": "9faac1b6520d894b7473da2087300c18447e0268f7726e7d131976c76afe1a06",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "csv.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/csv.svg",
+      "sha256": "09f4c9e22a01f04a5783dfae8dc2d0bff1b661b4b159bca06572a01d006a1e43",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "csv_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/csv_dark.svg",
+      "sha256": "1cf9070785750032da988524e18fbe5001d86f279ca6a548804e982c1fa14eaf",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "download.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/download.svg",
+      "sha256": "17445a4572cb0a0319899f7d3f30be35f5f363eb77da80fe6ff676590214133f",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "download_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/download_dark.svg",
+      "sha256": "0edd12e135a9749ebad886517243943a69619a96c87c752025cec9ad2653e115",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "file.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/unknown.svg",
+      "sha256": "cd52e9c6e3bf865dac9297fbb494b7a92bd2eed84ff7d6aec6d77e22d80b5b22",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "file_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/unknown_dark.svg",
+      "sha256": "960fbd613eb362d1dc14d4fe6e9e7d96f6948971678c84ba321008765f4389b0",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "flask.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/test.svg",
+      "sha256": "52f5eeb2e9ab0a6689b21f677f5139904fa887596517cc6543d454bc9052e490",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "flask_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/test_dark.svg",
+      "sha256": "0a94f04c9f864a8eda5decb46e9b7f496003d5e946f1c4dd2538ad60ad8ae709",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "fold-closed.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/gutter/unfold.svg",
+      "sha256": "1638540d8cb8e27f385ee1622a17ca3a6a5d4a4a7447e29552e0b7bed6226007",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "fold-closed_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/gutter/unfold_dark.svg",
+      "sha256": "9dbf9e6f336ccc71f8a429f048ed23fd5b3698c3c0f243e81c3490d812e4a162",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "fold-open.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/gutter/fold.svg",
+      "sha256": "b93f3b9fda5937ee1a4c3f08b32104c01755438b069babd5f85a9d9326517825",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "fold-open_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/gutter/fold_dark.svg",
+      "sha256": "32307cae99a395db2a02538f86b61968f44c75f71269b25bccd4131cc1f23fd6",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "folder-source.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/sourceRoot.svg",
+      "sha256": "b5a21176c95a0010dfcb52c9a15e1c6055a4e1a9e7fad71609e81824c4e15685",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "folder-source_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/sourceRoot_dark.svg",
+      "sha256": "cc92b0c0ec4cd0c635acc6776df96c0c8a97474cbb8de3b3d8b562eeab2e637b",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "folder.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/folder.svg",
+      "sha256": "e78b061f701e39613936bc68751ed51e6cb2b1451dba322cd98ffdfd1a105065",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "folder_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/folder_dark.svg",
+      "sha256": "4f08a99236e4b08632cafb159f31df27f238106d584ecf725be42b9702a0a02e",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "function.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/function.svg",
+      "sha256": "e0bb3f8ca9f3b9e4a0eefe398df31fe8fd0b74caad740be0eead5af37b7999fc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "function_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/function_dark.svg",
+      "sha256": "5a0d42c862dd3ae1ef34cbf83055c3376d08d10fc0050fd4353e9a3336e73c0c",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "gitignore.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/ignored.svg",
+      "sha256": "be8479fac4fca95e79cec08872269379c70337419c9869c0198a1109079605ee",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "gitignore_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/ignored_dark.svg",
+      "sha256": "8d5449d583b961790c2ec52c6f1e2b021eeabac856c48a53e1a1c3c6f776efac",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "help.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/help.svg",
+      "sha256": "d2f33a762f7c1e619d9e24e184c622db25a8663e95c040f6b274f13f5011566d",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "help_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/help_dark.svg",
+      "sha256": "ec90ca402d18df180190261be7b2c0ad437fd5190378d3f7c142a568a61af6a8",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "html.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/html.svg",
+      "sha256": "8cc1a59695de46025d34d8cb61a73419f50160c45b96a587e426f84d65c530f4",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "html_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/html_dark.svg",
+      "sha256": "bfa377d13629063e50627053662bfe7d6d61b3e1044c3e2485536ef5e2b9a3cc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "java.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/java.svg",
+      "sha256": "2056fcd754bc6a6e0ba13d5cf054b022f363f2f6839828b86c83a47f6ec8defc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "java_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/java_dark.svg",
+      "sha256": "3166f1d9895bc63034e8f105672bb4db124350eb6ed0803e300d24e0fb9a14bc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "javascript.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/javaScript.svg",
+      "sha256": "e601f341c4c0b0c52f2abfbb6bb4132862d63c3d862f4c7eca86efdf90565dcc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "javascript_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/javaScript_dark.svg",
+      "sha256": "f5ff367bcfeaab33abdac467ce9f7122543f4da21bda76806e96017a1da55b7b",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "json.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/json.svg",
+      "sha256": "bbbc7e1e2b583e2b4cca3a0c4dd507ce41c914a66d7bad1e6599f3ea5395e61c",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "json_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/json_dark.svg",
+      "sha256": "c4992ee9127e8685d5ec96570f48668d0be7aabfa4f0099ff6dbc5e51796a5f2",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "layout.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/layout.svg",
+      "sha256": "ae79f179b8ef10280a8fa3db12cbac22b8fff91ef538195b38d3a99eda160a66",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "layout_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/layout_dark.svg",
+      "sha256": "2d99c28f69cd02732dc1a8565821b3770d905c4322cfc3f08829b98de254a744",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "library.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/library.svg",
+      "sha256": "ba5f3aa9049f2ca58c59826c12527ad315e3b41d2233eb6284d7cc6132d7a1c0",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "library_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/library_dark.svg",
+      "sha256": "68d107edca1f77240e928c426722b8ed84b30a94926e07d2abce0d83218a05d5",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "markdown.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/markdown.svg",
+      "sha256": "bfe84e2ff52f22bf668cc614468f4798ec75786dd4e5674a464d63054beca67d",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "markdown_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/markdown_dark.svg",
+      "sha256": "4a51e2e3aca13cf778539187ea22a60f0f9a83731e70d5b51ff79f34ba51a1e1",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "maximize.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/maximize.svg",
+      "sha256": "d6913defa73b5ef151b864669552e54002ec5f03648eb69b7b2874cb982e52d6",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "maximize_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/maximize_dark.svg",
+      "sha256": "2ae1cf2f9ec25b006e8440c7aa8a111bfb8ab78973158c6d73322675dd788032",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "method.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/method.svg",
+      "sha256": "d947677a4aaf16fdd2d2aabdf3319736d454ae31e124414cd5bf11119284b0ed",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "method_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/nodes/method_dark.svg",
+      "sha256": "9d6eaed820d2ffb99a17fcb1f9fdcd58aa2d1e07c8c5954deda2c19b4d75137a",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "minimize.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/minimize.svg",
+      "sha256": "a045e0a8ab9cd423e50208442cadd0175fd727f00b72a8de84cf49c75c708dfa",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "minimize_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/minimize_dark.svg",
+      "sha256": "440580a3d3584d597a95ac5469fa427fb22f0fd212ebffc1785cf8812eb3498e",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "more.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/moreHorizontal.svg",
+      "sha256": "355ba9fddf1f50fd191d1ef3893ad78df8c22818cdff3be81153c99d6cf46a1b",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "more_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/moreHorizontal_dark.svg",
+      "sha256": "cc54a1969dd4fa65fa370a6f9ff28e2fb4dc9090280b09ab10d3061786f5548c",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "play.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/run/run.svg",
+      "sha256": "152f9b200bddd25b2ee3f0b03c2be710aa131891fc0e39e0d74f2532a626e6e9",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "play_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/run/run_dark.svg",
+      "sha256": "dcd7e6658108d94976a295dad27d1ae11ae66f8d524dffdb5a2e87a336756c8e",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "plus.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/add.svg",
+      "sha256": "337388830262aeb22502d3954f2bc543c332f025c1fab16a7231acc1fd5254b8",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "plus_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/add_dark.svg",
+      "sha256": "1244cf1ce1320b2c95194230305c2e736bee457e96d6e431dda4240f18098756",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "project.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/project.svg",
+      "sha256": "9198a3888742424df3cba1579bd8566041af0e5e79ff81919adbad22310bcc32",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "project_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/project_dark.svg",
+      "sha256": "9b071b3976642d6018bc76adc632f33890997034f141b86ad1d8bdc7874e274a",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "python.svg",
+      "source": "https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg",
+      "sha256": "baec8662a1461c2cacc326b54d2727cb2f1ce07ba02d00f5b826d035104f649f",
+      "license": "LicenseRef-PSF-Logo",
+      "copyright": "Python Software Foundation; logo designed by Tim Parkin",
+      "modified": false,
+      "commercial_use": true,
+      "usage": "Unaltered artwork identifies Python source files and interpreter compatibility only. No endorsement or product branding.",
+      "permission": "https://www.python.org/psf/trademarks/#uses-that-never-require-approval"
+    },
+    {
+      "file": "refresh.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/refresh.svg",
+      "sha256": "3efff615c01c60b9e1a30eabf31e4fe0fda1eec76c24fa1496aae4712165c816",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "refresh_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/refresh_dark.svg",
+      "sha256": "3c089055a2edb69e0b19ee5884dfebb3a705ca82293d2b09ded08060f92da6d1",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "restore.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/restore.svg",
+      "sha256": "93788e7af15b3b6e8f466f376279dea8e07e03e0072c6b2f1ca5271e1a945838",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "restore_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/windows/restore_dark.svg",
+      "sha256": "f2522ce956c9ea275d2858e59999b9e2af20827af78d9eb70fee2b8a106d11be",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "save.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/save.svg",
+      "sha256": "e5ae9e72423d4fff5790f7cbacbffb0816777ac226d242a5e0aa14799aa5e5eb",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "save_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/save_dark.svg",
+      "sha256": "4f17eae278e685ce07d9fc5fc2195a805bb803a3ae085e9f5c2b55bd760598f9",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "search.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/search.svg",
+      "sha256": "81e8241e7b38407420c573dfa264cd6df5deac0e8d59b935ce4c02b607bbe342",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "search_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/search_dark.svg",
+      "sha256": "aa3c118be2522e16522422aaa2fc2453dfa1016156d5e6a0e1b3484ffac15d14",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "settings.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/settings.svg",
+      "sha256": "81d7bb2e91986a47e9e40287d4da9c4719905378ecac8b26234b7d2bf95127ed",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "settings_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/settings_dark.svg",
+      "sha256": "d2c6e46b3788e7fed67d0d36d87f879a5394be0ab68d03b4aa40790de20e5222",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "shell.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/shell.svg",
+      "sha256": "4a8c336a8d0737df6ebee0b1006d03909f0ad5770a98d5ad28e746d3f95ae733",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "shell_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/shell_dark.svg",
+      "sha256": "09c58f2d69bedc5f3c518f9e42998f3bbb3ec5b7fd33b06cd24d1734c74d6cc7",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "sql.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/sql.svg",
+      "sha256": "56a74dc252d318ad5ab8e0859cffb0f2ff1ada2736dbff3abc18116ea900320f",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "sql_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/sql_dark.svg",
+      "sha256": "be2a690df00ada9e6bc43f841769f378c03e523a845617b21a6ff7f4323096c6",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "stop.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/run/stop.svg",
+      "sha256": "fc3a56e4ddf219f4abab8830669eed422bf130f9ad8b086b3f52f75aa4aeac14",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "stop_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/run/stop_dark.svg",
+      "sha256": "849dacfc40b7c7efdfbfcd2a59b800659c8e6149bc3d850a7f5cbbe25dbf4f82",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "structure.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/structure.svg",
+      "sha256": "ad3e94a39ca07eb262e081a85bf184b5b2a52c863a3e3f77bb6a28466dca339e",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "structure_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/toolwindows/structure_dark.svg",
+      "sha256": "5a617c2837b33a3d1d92548272a0451243248936c979b8f93a5cd13916200eb8",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2024 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "sun.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/inspections/inspectionsPowerSaveMode.svg",
+      "sha256": "5cee3b8a463825625e2612df16a80cb1d309d0b7a8055b4ad885b03e48024304",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "sun_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/inspections/inspectionsPowerSaveMode_dark.svg",
+      "sha256": "f0269b2e60495e1198cde5aab7aadce5a4ba75658dc08fcafd45c8d542508764",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "text.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/text.svg",
+      "sha256": "d71666166da544ad42b13bb5af976eb6f0afb60cbaa636676d238c98383ee296",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "text_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/text_dark.svg",
+      "sha256": "3391cc35837a4420fa9517f2297d8f6b07428db63f57f07dd5c2c29ef00cb489",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "toml.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/toml.svg",
+      "sha256": "d8dbdbada06151868dbcf791ea7a041c4ad438a499ba44bb672a76fc8abf6048",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "toml_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/toml_dark.svg",
+      "sha256": "4177347806efb6f5e31307e8427e8c9274bedfe8c8476b9ebb77c087b88027cc",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "trash.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/delete.svg",
+      "sha256": "90ce02aac2a0ccf60e7d9470e192d72e7b1bbe046a17a5f4f5941c73c04e594d",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "trash_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/delete_dark.svg",
+      "sha256": "3e58be48794d8eddeae69c7f64cbd6aea390c193fa08645ba4f5546cbe839596",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2022 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "typescript.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/typeScript.svg",
+      "sha256": "6fc794f096ad1b506d42821049d200879bd0a0795b2110f99b726b91f14e8d5a",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "typescript_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/typeScript_dark.svg",
+      "sha256": "18f56081e42916c7a3109062359ff41aeff6372d10bdb8942de6dce5e19f624e",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "upload.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/upload.svg",
+      "sha256": "33f5d09b994d492faa84df0a26e8422bdba222f784d7d71319edc8ffaf2e3127",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "upload_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/general/upload_dark.svg",
+      "sha256": "f109feae2e5869c04128431d73cb71e68da6413845709888cd7591dc6b580a43",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "xml.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/xml.svg",
+      "sha256": "ed18f7315e4dea5eb9298a66732968805c0ff9cda8f3ef0ca339f864e536d9ea",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "xml_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/xml_dark.svg",
+      "sha256": "fb39e44dd70fdda7a94c6074e5d3d58d30faef92bc6f91c1244b0320aee2486b",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2023 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "yaml.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/yaml.svg",
+      "sha256": "f715bd90d921963fa9852ceff03d313e15cf1ef25a9a4ed609a6698a423f60ea",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2025 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    },
+    {
+      "file": "yaml_dark.svg",
+      "source": "https://raw.githubusercontent.com/JetBrains/intellij-community/885a4a8c05b97f129f6d13c15b0bbf28cc71dd1b/platform/icons/src/expui/fileTypes/yaml_dark.svg",
+      "sha256": "09e0df7109e8decf4a1eaba4887da88f5469a0a095fae9143f12bafe6418473f",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2000-2025 JetBrains s.r.o. and contributors",
+      "modified": false,
+      "commercial_use": true
+    }
+  ]
+}

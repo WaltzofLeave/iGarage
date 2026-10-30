@@ -182,11 +182,9 @@ void QuickPick::render() {
         const float indent = static_cast<float>(std::clamp(item.depth, 0, 2) * 12);
         const float y = listTop + (i - firstVisible_) * rowHeight;
         if (i == selected_) paint_.round(rect(7, y, width - 14, rowHeight), theme_.selected, 3);
-        const std::wstring glyph = item.kind == 'C' ? L"C" : item.kind == 'f' ? L"ƒ" :
-            item.kind == '#' ? L"#" : item.kind == 'P' ? L"Py" :
-            item.kind == 'M' ? L"M↓" : item.kind == 'J' ? L"JS" : L"";
-        if (glyph.empty()) paint_.icon(Icon::File, 20 + indent, y + 10, 15, theme_.muted);
-        else paint_.text(glyph, rect(19 + indent, y, 24, rowHeight), theme_.blue, 10, 500, 0, true);
+        const auto icon = item.kind == 'C' || item.kind == 'f' || item.kind == '#' ?
+            symbolIcon(item.kind, item.depth) : fileIcon(item.id);
+        paint_.icon(icon, 20 + indent, y + 10, 16, theme_.muted);
         paint_.text(item.label, rect(51 + indent, y, width * .52f - 51 - indent, rowHeight), theme_.text, 11);
         paint_.text(item.detail, rect(width * .52f, y, width * .48f - 20, rowHeight), theme_.muted, 9, 400, 1);
     }
@@ -212,7 +210,7 @@ LRESULT QuickPick::handleMessage(HWND window, UINT message, WPARAM w, LPARAM l) 
         PAINTSTRUCT state{};
         BeginPaint(window, &state);
         if (!paint_.rt) paint_.init(window, d2d_.Get(), dwrite_.Get(), fonts_.Get(), dpi_);
-        if (paint_.rt) { paint_.begin(); render(); paint_.end(); }
+        if (paint_.rt) { paint_.begin(theme_.bg == Theme::light().bg); render(); paint_.end(); }
         EndPaint(window, &state);
         return 0;
     }

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "svg_files": 105,
+  "apache_2_0_files": 104,
+  "psf_permitted_original_logo": 1,
+  "excluded_unlicensed_candidates": 6,
+  "checks": [
+    "sha256",
+    "per-file license",
+    "commercial-use permission",
+    "official source",
+    "complete license and notices",
+    "no unlisted assets",
+    "no external SVG resources"
+  ]
+}

@@ -1,0 +1,21 @@
+Python and the Python logos are trademarks or registered trademarks of the
+Python Software Foundation, used by Orbit under the Foundation's published
+permission for accurate compatibility identification. Orbit is independent
+and is not sponsored or endorsed by the PSF or JetBrains.
+
+Official artwork: https://www.python.org/community/logos/
+Permission: https://www.python.org/psf/trademarks/#uses-that-never-require-approval
+Policy reviewed: 2026-10-30
+
+The PSF policy explicitly permits unaltered logos, without prior approval,
+when accurately indicating software written in, compatible with, or containing
+the Python programming language, for both non-commercial and commercial use.
+The official logo page permits use of the two-snakes element on the same terms.
+
+The SVG is preserved byte-for-byte. The renderer preserves its aspect ratio,
+colors, artwork and shadow, and adds a small adjacent TM indicator. It is used
+only for Python file and interpreter identification, never as Orbit's logo.
+The trademark policy is not the Python language's software license, and this
+asset is not relicensed under Apache-2.0 or the repository's own code license.
+Other uses, including modified logos or product/company branding, require
+their own review under the PSF policy.
