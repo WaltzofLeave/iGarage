@@ -59,14 +59,23 @@ void App::configureEditor(HWND h,bool code){
  if(code){S(SCI_AUTOCSETIGNORECASE,TRUE);S(SCI_AUTOCSETMAXHEIGHT,10);S(SCI_AUTOCSETMAXWIDTH,55);S(SCI_AUTOCSETCHOOSESINGLE,FALSE);S(SCI_AUTOCSETDROPRESTOFWORD,TRUE);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST,rgb(theme.text)|0xff000000u);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST_BACK,rgb(theme.panel)|0xff000000u);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST_SELECTED_BACK,rgb(theme.selected)|0xff000000u);S(SCI_SETMODEVENTMASK,SC_MOD_INSERTTEXT|SC_MOD_DELETETEXT);}
 }
 void App::styleEditor(){
- configureEditor(editor,true);if(active.empty())return;auto e=extension(active);const char*lex=e=="py"?"python":e=="js"||e=="cpp"||e=="h"?"cpp":e=="json"?"json":e=="md"?"markdown":e=="html"?"hypertext":e=="css"?"css":e=="toml"?"toml":e=="yaml"||e=="yml"?"yaml":"null";sci(SCI_SETILEXER,0,(sptr_t)CreateLexer(lex));
+ if(active.empty()||!documents.contains(active))return;
+ auto& document=documents.at(active);
+ auto e=extension(active);
+ const orbit::EditorAppearance desired{settings.font,settings.tab,static_cast<int>(dpi),settings.wrap,settings.light,e};
+ if(document.appearance && *document.appearance==desired && currentEditorAppearance && *currentEditorAppearance==desired)return;
+ const bool needsLexer=!document.appearance || document.appearance->language!=e;
+ configureEditor(editor,true);
+ document.appearance=desired;
+ currentEditorAppearance=desired;
+const char*lex=e=="py"?"python":e=="js"||e=="cpp"||e=="h"?"cpp":e=="json"?"json":e=="md"?"markdown":e=="html"?"hypertext":e=="css"?"css":e=="toml"?"toml":e=="yaml"||e=="yml"?"yaml":"null";if(needsLexer)sci(SCI_SETILEXER,0,(sptr_t)CreateLexer(lex));
  auto style=[&](int n,unsigned c,bool italic=false){sci(SCI_STYLESETFORE,n,rgb(c));sci(SCI_STYLESETITALIC,n,italic);};
  auto key=settings.light?0x925b91:0xcd96c8,str=settings.light?0x69834c:0xa6be8b,def=settings.light?0x8d6737:0xe7be83,comment=settings.light?0x84918a:0x737f83,number=settings.light?0x9e704b:0xd4aa7d;
  if(e=="py"){sci(SCI_SETKEYWORDS,0,(sptr_t)"and as assert async await break class continue def del elif else except False finally for from global if import in is lambda None nonlocal not or pass raise return True try while with yield");sci(SCI_SETKEYWORDS,1,(sptr_t)"abs all any bool bytes callable chr dict enumerate filter float format frozenset getattr hasattr hash help hex id input int isinstance issubclass iter len list map max min next object open ord pow print range repr reversed round set setattr slice sorted str sum super tuple type vars zip self cls");style(SCE_P_WORD,key);style(SCE_P_WORD2,theme.blue);for(int n:{SCE_P_STRING,SCE_P_CHARACTER,SCE_P_TRIPLE,SCE_P_TRIPLEDOUBLE,SCE_P_FSTRING,SCE_P_FCHARACTER,SCE_P_FTRIPLE,SCE_P_FTRIPLEDOUBLE})style(n,str);style(SCE_P_COMMENTLINE,comment,true);style(SCE_P_COMMENTBLOCK,comment,true);style(SCE_P_NUMBER,number);style(SCE_P_CLASSNAME,def);style(SCE_P_DEFNAME,def);style(SCE_P_DECORATOR,theme.purple);style(SCE_P_OPERATOR,theme.text);sci(SCI_SETPROPERTY,(uptr_t)"fold",(sptr_t)"1");sci(SCI_SETPROPERTY,(uptr_t)"fold.quotes.python",(sptr_t)"1");}
  else if(e=="js"||e=="cpp"||e=="h"){sci(SCI_SETKEYWORDS,0,(sptr_t)"const let var function return if else for while class new import from export default async await true false null undefined int void auto public private include namespace using");style(SCE_C_WORD,key);style(SCE_C_STRING,str);style(SCE_C_CHARACTER,str);style(SCE_C_COMMENT,comment,true);style(SCE_C_COMMENTLINE,comment,true);style(SCE_C_NUMBER,number);}
  else if(e=="md"){for(int n=SCE_MARKDOWN_HEADER1;n<=SCE_MARKDOWN_HEADER6;n++)style(n,def);style(SCE_MARKDOWN_STRONG1,def);style(SCE_MARKDOWN_LINK,theme.blue);style(SCE_MARKDOWN_CODE,str);style(SCE_MARKDOWN_CODEBK,str);}
  else if(e=="json"){style(SCE_JSON_STRING,str);style(SCE_JSON_PROPERTYNAME,theme.blue);style(SCE_JSON_NUMBER,number);style(SCE_JSON_KEYWORD,key);}
- sci(SCI_STYLESETBACK,STYLE_BRACELIGHT,rgb(settings.light?0xead7c6:0x4e4335));sci(SCI_STYLESETFORE,STYLE_BRACELIGHT,rgb(theme.accent));sci(SCI_COLOURISE,0,-1);
+ sci(SCI_STYLESETBACK,STYLE_BRACELIGHT,rgb(settings.light?0xead7c6:0x4e4335));sci(SCI_STYLESETFORE,STYLE_BRACELIGHT,rgb(theme.accent));sci(SCI_SETIDLESTYLING,SC_IDLESTYLING_AFTERVISIBLE);
 }
 void App::updateLayout(){if(!window)return;RECT r;GetClientRect(window,&r);layout.update(dip(r.right),dip(r.bottom),sideVisible,structureVisible,bottomVisible,focusMode);ensureTabVisible();positionControls();invalidate();}
 void App::positionControls(){
@@ -100,7 +109,7 @@ LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  case WM_LBUTTONDOWN:{SetFocus(h);closeMenu();float x=dip(GET_X_LPARAM(l)),y=dip(GET_Y_LPARAM(l));for(auto it=hits.rbegin();it!=hits.rend();++it){auto&hit=*it;if(contains(hit.box,x,y)&&(hit.action=="resize-side"||hit.action=="resize-bottom"||hit.action=="scroll-code"||hit.action=="scroll-horizontal")){dragMode=hit.action=="resize-side"?1:hit.action=="resize-bottom"?2:hit.action=="scroll-code"?3:4;dragStart=dragMode==1||dragMode==4?x:y;dragSize=dragMode==1?layout.sidebar:dragMode==2?layout.bottom:dragMode==3?(float)sci(SCI_GETFIRSTVISIBLELINE):(float)sci(SCI_GETXOFFSET);SetCapture(h);return 0;}}return 0;}
  case WM_LBUTTONUP:if(dragMode){dragMode=0;ReleaseCapture();saveSession();return 0;}dispatchClick(dip(GET_X_LPARAM(l)),dip(GET_Y_LPARAM(l)));return 0;
  case WM_CAPTURECHANGED:dragMode=0;return 0;
- case WM_RBUTTONUP:{float x=dip(GET_X_LPARAM(l)),y=dip(GET_Y_LPARAM(l));for(auto&hit:hits)if(hit.action=="open-file"&&contains(hit.box,x,y)){showMenu("file-context",x,y,hit.data);return 0;}return 0;}
+ case WM_RBUTTONUP:{float x=dip(GET_X_LPARAM(l)),y=dip(GET_Y_LPARAM(l));for(auto&hit:hits)if(hit.action=="open-file"&&contains(hit.box,x,y)){showMenu(contains(layout.tabs,x,y)?"tab-context":"file-context",x,y,hit.data);return 0;}return 0;}
  case WM_MOUSEWHEEL:{POINT p{GET_X_LPARAM(l),GET_Y_LPARAM(l)};ScreenToClient(h,&p);int d=GET_WHEEL_DELTA_WPARAM(w)>0?-3:3;if(contains(layout.side,dip(p.x),dip(p.y))){treeScroll=std::clamp(treeScroll+d,0,std::max(0,(int)treeRows.size()-5));invalidate();}else if(contains(layout.structureRect,dip(p.x),dip(p.y))){structureScroll=std::clamp(structureScroll+d,0,std::max(0,(int)symbols.size()-3));invalidate();}return 0;}
  case WM_COMMAND:if(HIWORD(w)==EN_CHANGE){if((HWND)l==searchEdit){SetTimer(h,2,200,nullptr);}return 0;}break;
  case WM_CTLCOLOREDIT:case WM_CTLCOLORSTATIC:{auto dc=(HDC)w;if((HWND)l==dimmer){SetBkColor(dc,RGB(0,0,0));return (LRESULT)GetStockObject(BLACK_BRUSH);}SetTextColor(dc,rgb(theme.text));SetBkColor(dc,rgb(theme.bg));static HBRUSH dark=CreateSolidBrush(RGB(30,31,34)),light=CreateSolidBrush(RGB(250,249,247));return (LRESULT)(settings.light?light:dark);}
@@ -113,7 +122,7 @@ LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  case WM_DROPFILES:{auto drop=(HDROP)w;UINT n=DragQueryFileW(drop,0xffffffff,nullptr,0);for(UINT i=0;i<n;i++){wchar_t p[32768];DragQueryFileW(drop,i,p,32768);if(fs::is_directory(p))scanProject(p);else importFile(p);}DragFinish(drop);return 0;}
  case WM_KEYDOWN:if(key((UINT)w,(GetKeyState(VK_CONTROL)&0x8000)!=0,(GetKeyState(VK_SHIFT)&0x8000)!=0,(GetKeyState(VK_MENU)&0x8000)!=0))return 0;break;
  case WM_CLOSE:finishClose();return 0;
- case WM_DESTROY:alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
+ case WM_DESTROY:quickPick.close();alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
  }
  return DefWindowProcW(h,m,w,l);
 }
@@ -127,8 +136,8 @@ LRESULT CALLBACK App::EditSubclass(HWND h,UINT m,WPARAM w,LPARAM l,UINT_PTR id,D
 int WINAPI wWinMain(HINSTANCE h,HINSTANCE,LPWSTR command,int show){
  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);App app;
  if(!app.init(h)){MessageBoxW(nullptr,L"无法初始化 Direct2D / Scintilla。请检查安装文件。",L"Orbit IDE",MB_ICONERROR);return 1;}
- std::wstring cmd=command;if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
+ std::wstring cmd=command;if(cmd.find(L"--workbench-test")!=cmd.npos){int code=app.workbenchTest(app.exeDir/L"workbench-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
  if(cmd.find(L"--benchmark")!=cmd.npos){app.benchmark(app.exeDir/L"native-benchmark.json");DestroyWindow(app.window);CoUninitialize();return 0;}
  if(cmd.find(L"--integration-test")!=cmd.npos){int code=app.integrationTest(app.exeDir/L"native-integration-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
- ShowWindow(app.window,show);ShowWindow(app.window,SW_SHOW);UpdateWindow(app.window);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){if(msg.message==WM_KEYDOWN||msg.message==WM_SYSKEYDOWN){bool ctrl=GetKeyState(VK_CONTROL)&0x8000,shift=GetKeyState(VK_SHIFT)&0x8000,alt=GetKeyState(VK_MENU)&0x8000;if(!app.popup&&app.key((UINT)msg.wParam,ctrl,shift,alt))continue;}TranslateMessage(&msg);DispatchMessageW(&msg);}for(auto f:app.ownedFonts)DeleteObject(f);CoUninitialize();return (int)msg.wParam;
+ ShowWindow(app.window,show);ShowWindow(app.window,SW_SHOW);UpdateWindow(app.window);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){if(msg.message==WM_KEYDOWN||msg.message==WM_SYSKEYDOWN){bool ctrl=GetKeyState(VK_CONTROL)&0x8000,shift=GetKeyState(VK_SHIFT)&0x8000,alt=GetKeyState(VK_MENU)&0x8000;if(!app.popup&&!app.quickPick.isOpen()&&app.key((UINT)msg.wParam,ctrl,shift,alt))continue;}TranslateMessage(&msg);DispatchMessageW(&msg);}for(auto f:app.ownedFonts)DeleteObject(f);CoUninitialize();return (int)msg.wParam;
 }

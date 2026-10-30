@@ -84,4 +84,19 @@ Orbit 与 JetBrains / PyCharm 无关联。第三方许可证随便携包及源�
 
 ## Repository location
 
-This Windows implementation is self-contained under `workbench/windows`. From the repository root, run `workbench\windows\build.cmd`; the executable is generated at `workbench/windows/app/OrbitNative.exe`. Known performance findings are recorded in [qa/performance-audit.txt](qa/performance-audit.txt) and [qa/performance-audit.json](qa/performance-audit.json). These findings have not been fixed in this import.
+This Windows implementation is self-contained under `workbench/windows`. From the repository root, run `workbench\windows\build.cmd`; the executable is generated at `workbench/windows/app/OrbitNative.exe`. The original performance baseline is retained in [qa/performance-audit.txt](qa/performance-audit.txt) and [qa/performance-audit.json](qa/performance-audit.json).
+
+## Navigation and editing update
+
+Recent Files (`Ctrl+E`), searchable file structure (`Ctrl+F12`), Back/Forward
+(`Ctrl+Alt+Left/Right`), reopening closed tabs (`Ctrl+Shift+T`), and tab context
+menus are available. Cursor, selection, and viewport state follow document navigation.
+
+Editing commands include duplicate (`Ctrl+D`), delete lines (`Ctrl+Y`), move lines
+(`Alt+Shift+Up/Down`), join lines (`Ctrl+Shift+J`), select the next occurrence
+(`Alt+J`), and redo (`Ctrl+Shift+Z`). Commands preserve existing newline conventions.
+
+See the [workflow comparison](docs/pycharm-comparison.md) and
+[code structure](docs/architecture.md). Run `app\OrbitNative.exe --workbench-test`
+for the new isolated checks. `build.cmd --app-only` skips dependency rebuilding
+when the existing vendored static libraries are already available.

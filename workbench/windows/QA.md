@@ -2,6 +2,24 @@
 
 核验日期：2026-10-30，Asia/Shanghai。
 
+## Navigation update
+
+The Windows platform directory was rebuilt with the default `build.cmd`, including
+the vendored libraries. The 32 baseline checks, 35 navigation/editor checks, and
+18 existing integration workflows passed (85 total). Results are in
+`qa/workbench-tests.json`, `qa/native-self-test.json`, and `qa/native-integration-test.json`.
+
+Live UI checks at 150% DPI covered Recent Files filtering and its empty state,
+Escape/focus restoration, file-outline filtering and Enter navigation, Back to
+the previous caret, switching file types, and closing/reopening a tab.
+PyCharm's actual Recent Files UI was inspected without modifying its project.
+
+The new five-sample warm 10 MiB activation test records method timings around
+1.5 ms on this machine. The earlier audit measured approximately 88 ms with forced
+full recolouring. These are method timings, not input-to-screen latency or an
+IDE-to-IDE benchmark. Clean closed documents now release their text and editor
+reference; dirty ones wait for successful saving.
+
 参考：此前 Orbit 网页版的 `index.html`、`style.css`、`app.js` 与首屏截图。实际桌面核验使用 Windows 原生窗口，在本机 150% DPI 缩放下操作并截图，未以内部布局检查代替真实画面。
 
 ## 显示与交互

@@ -1,5 +1,7 @@
 #pragma once
 #include "core.h"
+#include "navigation/history.h"
+#include "ui/quick_pick.h"
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shobjidl.h>
@@ -11,6 +13,25 @@ struct MenuItem{std::wstring label,key;std::string action,data;bool separator=fa
 struct PaletteItem{std::wstring label,detail;std::string action,data;};
 class App{
 public:
+ orbit::NavigationHistory navigation;
+ orbit::QuickPick quickPick;
+ std::optional<orbit::NavigationLocation> pendingNavigation;
+ bool historyReplay = false;
+ bool activatingDocument = false;
+ bool projectTreeDirty = true;
+ std::map<std::string, orbit::EditorViewState> restoredViews;
+ std::optional<orbit::EditorAppearance> currentEditorAppearance;
+ orbit::NavigationLocation captureEditorLocation();
+ void rememberEditorView();
+ void restoreEditorView(const orbit::EditorViewState& view);
+ void navigateHistory(bool forward);
+ void reopenClosedTab();
+ void showRecentFiles();
+ void showFileOutline();
+ void releaseClosedDocument(const std::string& path);
+ bool workbenchAction(const std::string& id, const std::string& data);
+ bool workbenchKey(UINT key, bool ctrl, bool shift, bool alt);
+ int workbenchTest(const fs::path& report);
  HINSTANCE instance{};HWND window{},editor{},output{},termOutput{},searchEdit{},termEdit{},popup{},popupEdit{},popupEdit2{},dimmer{},menuWindow{},tooltip{};
  ComPtr<ID2D1Factory>d2d;ComPtr<IDWriteFactory>dw;ComPtr<IDWriteFontCollection>fontCollection;Paint paint,popupPaint,menuPaint;
  Theme theme;Settings settings;Layout layout;float dpi=96,scale=1;fs::path exeDir,root,dataDir;std::map<std::string,Document>documents;std::vector<std::string>tabs;std::string active,tool="project",panel="run",message="欢迎使用 Orbit。保持专注，创造更多。";

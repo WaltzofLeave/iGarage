@@ -19,6 +19,7 @@
 *.dll
 *.lib
 *.pyc
+*.log
 __pycache__/
 .vs/
 .vscode/

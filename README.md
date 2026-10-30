@@ -21,5 +21,7 @@ Python execution requires a local Python interpreter. The UI can start without P
 
 See [Windows verification](workbench/windows/QA.md) and the
 [performance audit](workbench/windows/qa/performance-audit.txt).
-The audit records known issues; its proposed performance fixes are not implemented yet.
+The audit is the original baseline. The [navigation update](workbench/windows/docs/pycharm-comparison.md)
+addresses cached document activation and closed-tab memory retention; remaining
+work is documented in the [architecture notes](workbench/windows/docs/architecture.md).
 Third-party license notices are retained alongside their sources and assets.

@@ -1,0 +1,157 @@
+{
+  "checks": 35,
+  "passed": true,
+  "performance": {
+    "cached_10MiB_activation_samples_ms": [
+      1.6382,
+      1.5426,
+      1.751,
+      1.7075,
+      1.4825
+    ],
+    "scope": "Five method-level warm samples; not input-to-screen latency. No disk read or full lexical analysis is forced on activation."
+  },
+  "results": [
+    {
+      "name": "navigation_back_restores_precise_location",
+      "passed": true
+    },
+    {
+      "name": "navigation_forward_remembers_departure",
+      "passed": true
+    },
+    {
+      "name": "new_navigation_discards_forward_branch",
+      "passed": true
+    },
+    {
+      "name": "history_and_recent_memory_are_bounded",
+      "passed": true
+    },
+    {
+      "name": "recent_paths_are_deduplicated_and_mru_ordered",
+      "passed": true
+    },
+    {
+      "name": "rename_updates_recent_and_closed_locations",
+      "passed": true
+    },
+    {
+      "name": "deleted_paths_are_removed_from_navigation",
+      "passed": true
+    },
+    {
+      "name": "python_outline_tracks_classes_async_and_lines",
+      "passed": true
+    },
+    {
+      "name": "markdown_outline_tracks_headings",
+      "passed": true
+    },
+    {
+      "name": "javascript_outline_tracks_export_async",
+      "passed": true
+    },
+    {
+      "name": "line_endings_detect_lf_crlf_cr_and_empty",
+      "passed": true
+    },
+    {
+      "name": "initial_project_ready",
+      "passed": true
+    },
+    {
+      "name": "isolated_project_loaded",
+      "passed": true
+    },
+    {
+      "name": "open_second_native_document",
+      "passed": true
+    },
+    {
+      "name": "back_across_tabs_restores_caret",
+      "passed": true
+    },
+    {
+      "name": "forward_across_tabs_restores_target",
+      "passed": true
+    },
+    {
+      "name": "cross_language_switch_restores_python_colors",
+      "passed": true
+    },
+    {
+      "name": "open_tabs_keep_existing_document",
+      "passed": true
+    },
+    {
+      "name": "duplicate_line",
+      "passed": true
+    },
+    {
+      "name": "duplicate_is_one_undo_step",
+      "passed": true
+    },
+    {
+      "name": "duplicate_selection",
+      "passed": true
+    },
+    {
+      "name": "delete_selected_lines_preserves_next_line",
+      "passed": true
+    },
+    {
+      "name": "delete_lines_is_undoable",
+      "passed": true
+    },
+    {
+      "name": "move_line_down",
+      "passed": true
+    },
+    {
+      "name": "move_line_is_one_undo_step",
+      "passed": true
+    },
+    {
+      "name": "select_next_occurrence_adds_caret",
+      "passed": true
+    },
+    {
+      "name": "line_commands_preserve_utf8",
+      "passed": true
+    },
+    {
+      "name": "join_lines_removes_line_break",
+      "passed": true
+    },
+    {
+      "name": "dirty_closed_document_waits_for_save",
+      "passed": true
+    },
+    {
+      "name": "saved_closed_document_is_released",
+      "passed": true
+    },
+    {
+      "name": "reopen_closed_tab_restores_text_and_caret",
+      "passed": true
+    },
+    {
+      "name": "recent_files_and_view_state_are_persisted",
+      "passed": true
+    },
+    {
+      "name": "clean_large_closed_document_releases_storage",
+      "passed": true
+    },
+    {
+      "name": "structure_cache_reused_without_copying_large_file",
+      "passed": true
+    },
+    {
+      "name": "existing_python_test_workflow_still_runs",
+      "passed": true
+    }
+  ],
+  "scope": "Bounded state models and isolated real native-editor workflows. Visual checks are recorded separately."
+}

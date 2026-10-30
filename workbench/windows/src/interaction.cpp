@@ -4,6 +4,7 @@ void App::setPanel(std::string name){panel=std::move(name);bottomVisible=true;up
 void App::dispatchClick(float x,float y){for(auto i=hits.rbegin();i!=hits.rend();++i)if(contains(i->box,x,y)){auto h=*i;action(h.action,h.data,h.index);return;}}
 void App::action(const std::string&id,const std::string&data,int index){
  try{
+ if(workbenchAction(id,data))return;
  if(id=="run")run();else if(id=="tests")run(true);else if(id=="stop")stopRun();else if(id=="open-file")openFile(data);else if(id=="close-tab")closeTab(data);else if(id=="folder"){if(expanded.contains(data))expanded.erase(data);else expanded.insert(data);rebuildTree();}else if(id=="tool"){if(tool==data&&sideVisible&&!focusMode){sideVisible=false;updateLayout();}else setTool(data);}else if(id=="search-hit")openFile(data,index);else if(id=="goto-symbol")gotoLine(index);else if(id=="panel")setPanel(data);
  else if(id=="sidebar"){sideVisible=!sideVisible;updateLayout();saveSession();}else if(id=="structure"){structureVisible=!structureVisible;updateLayout();saveSession();}else if(id=="bottom"){bottomVisible=!bottomVisible;updateLayout();saveSession();}else if(id=="focus"){focusMode=!focusMode;updateLayout();}else if(id=="expand-bottom"){expandedBottom=!expandedBottom;layout.bottom=expandedBottom?layout.h*.6f:226;updateLayout();}else if(id=="terminal")setPanel("terminal");else if(id=="versions")setTool("versions");
  else if(id=="minimize")ShowWindow(window,SW_MINIMIZE);else if(id=="maximize")ShowWindow(window,IsZoomed(window)?SW_RESTORE:SW_MAXIMIZE);else if(id=="close")PostMessageW(window,WM_CLOSE,0,0);
@@ -13,17 +14,19 @@ void App::action(const std::string&id,const std::string&data,int index){
  }catch(const std::exception&ex){toast(ex.what());}
 }
 bool App::key(UINT k,bool ctrl,bool shift,bool alt){
+ if(workbenchKey(k,ctrl,shift,alt))return true;
  if(menuWindow){if(k==VK_ESCAPE){closeMenu();return true;}if(k==VK_DOWN||k==VK_UP){int n=(int)menuItems.size();if(n){do{menuHover=(menuHover+(k==VK_DOWN?1:-1)+n)%n;}while(menuItems[menuHover].separator);InvalidateRect(menuWindow,nullptr,FALSE);}return true;}if(k==VK_RETURN&&menuHover>=0){menuSelect(menuHover);return true;}}
  if(shift&&k==VK_F10){action("run");return true;}if(ctrl&&k=='S'){saveAll();saveActive(true);return true;}if(ctrl&&k=='P'){showPopup("files");return true;}if(ctrl&&k=='K'){showPopup("palette");return true;}if(ctrl&&shift&&k=='F'){setTool("search");return true;}if(ctrl&&alt&&k=='N'){showPopup("new-file");return true;}if(ctrl&&k=='F'){showPopup("find");return true;}if(ctrl&&k=='H'){showPopup("replace");return true;}if(ctrl&&k=='G'){showPopup("goto");return true;}if(ctrl&&k==VK_SPACE){complete();return true;}if(ctrl&&k==VK_OEM_2){toggleComment();return true;}if(ctrl&&k=='W'){if(!active.empty())closeTab(active);return true;}if(ctrl&&k==VK_TAB&&!tabs.empty()){auto i=std::find(tabs.begin(),tabs.end(),active)-tabs.begin();size_t n=(i+(shift?tabs.size()-1:1))%tabs.size();openFile(tabs[n]);return true;}if(ctrl&&(k==VK_ADD||k==VK_OEM_PLUS||k==VK_SUBTRACT||k==VK_OEM_MINUS)){settings.font=std::clamp(settings.font+((k==VK_ADD||k==VK_OEM_PLUS)?1:-1),11,20);applySettings();return true;}if(alt&&k==VK_F12){setPanel("terminal");return true;}if(alt&&k=='1'){sideVisible=!sideVisible;updateLayout();return true;}if(k==VK_F2&&!active.empty()){showPopup("rename",active);return true;}if(k==VK_F1){showPopup("help");return true;}if(k==VK_ESCAPE){if(sci(SCI_AUTOCACTIVE)){sci(SCI_AUTOCCANCEL);return true;}SetFocus(editor);return true;}return false;
 }
 void App::showMenu(std::string name,float x,float y,std::string data){
  closeMenu();menuName=name;auto add=[&](const wchar_t*label,const char*action,const wchar_t*key=L"",std::string d=""){menuItems.push_back({label,key,action,std::move(d),false});};auto sep=[&]{menuItems.push_back({L"",L"","","",true});};
  if(name=="file"||name=="project"||name=="project-more"){add(L"新建文件","new-file",L"Ctrl Alt N");add(L"打开项目文件夹…","open-folder");add(L"导入文件 / 项目…","import");sep();add(L"保存全部","save",L"Ctrl S");add(L"另存当前文件副本…","download");add(L"导出整个项目…","export");sep();add(L"创建本地检查点","checkpoint");if(name=="project-more"){sep();add(L"折叠所有目录","collapse");add(L"展开所有目录","expand");}}
- else if(name=="edit"){add(L"撤销","undo",L"Ctrl Z");add(L"重做","redo",L"Ctrl Y");sep();add(L"剪切","cut",L"Ctrl X");add(L"复制","copy",L"Ctrl C");add(L"粘贴","paste",L"Ctrl V");sep();add(L"查找","find",L"Ctrl F");add(L"替换","replace",L"Ctrl H");add(L"注释 / 取消注释","comment",L"Ctrl /");add(L"全选","select-all",L"Ctrl A");}
+ else if(name=="edit"){add(L"撤销","undo",L"Ctrl Z");add(L"重做","redo",L"Ctrl Shift Z");sep();add(L"剪切","cut",L"Ctrl X");add(L"复制","copy",L"Ctrl C");add(L"粘贴","paste",L"Ctrl V");sep();add(L"查找","find",L"Ctrl F");add(L"替换","replace",L"Ctrl H");add(L"注释 / 取消注释","comment",L"Ctrl /");add(L"全选","select-all",L"Ctrl A");sep();add(L"复制行 / 选区","duplicate",L"Ctrl D");add(L"删除行","delete-lines",L"Ctrl Y");add(L"合并行","join-lines",L"Ctrl Shift J");add(L"上移选中行","move-lines-up",L"Alt Shift ↑");add(L"下移选中行","move-lines-down",L"Alt Shift ↓");add(L"选择下一处相同文本","select-next-occurrence",L"Alt J");}
  else if(name=="view"){add(L"显示 / 隐藏项目","sidebar",L"Alt 1");add(L"显示 / 隐藏结构","structure");add(L"显示 / 隐藏底部面板","bottom");add(L"专注模式","focus");sep();add(L"自动换行","wrap");add(L"外观设置","settings");}
- else if(name=="navigate"){add(L"查找文件","files",L"Ctrl P");add(L"搜索所有内容","palette",L"Ctrl K");add(L"转到行","goto",L"Ctrl G");add(L"在项目中查找","search",L"Ctrl Shift F");}
+ else if(name=="navigate"){add(L"后退","navigate-back",L"Ctrl Alt ←");add(L"前进","navigate-forward",L"Ctrl Alt →");sep();add(L"最近的文件","recent-files",L"Ctrl E");add(L"文件结构","file-outline",L"Ctrl F12");add(L"重新打开关闭的标签","reopen-tab",L"Ctrl Shift T");sep();add(L"查找文件","files",L"Ctrl P");add(L"搜索所有内容","palette",L"Ctrl K");add(L"转到行","goto",L"Ctrl G");add(L"在项目中查找","search",L"Ctrl Shift F");}
  else if(name=="run"){add(L"运行当前 Python 文件","run",L"Shift F10");add(L"运行全部单元测试","tests");add(L"停止运行","stop");sep();add(L"标准输入…","stdin");add(L"Python 解释器","runtime");}
  else if(name=="tools"){add(L"打开项目终端","terminal",L"Alt F12");add(L"创建检查点","checkpoint");add(L"本地版本历史","versions");sep();add(L"设置","settings");}
+ else if(name=="tab-context"){add(L"关闭","close-tab",L"Ctrl W",data);add(L"关闭其他标签","close-others",L"",data);add(L"关闭所有标签","close-all-tabs");sep();add(L"重新打开关闭的标签","reopen-tab",L"Ctrl Shift T");add(L"最近的文件","recent-files",L"Ctrl E");}
  else if(name=="file-context"){add(L"打开","open-file",L"",data);add(L"重命名…","rename",L"F2",data);add(L"另存副本…","download");sep();add(L"移入项目回收目录…","delete",L"",data);}
  else if(name=="editor"){add(L"自动换行","wrap");add(L"查找","find",L"Ctrl F");add(L"替换","replace",L"Ctrl H");add(L"单词补全","complete",L"Ctrl Space");sep();add(L"另存当前文件副本…","download");add(L"编辑器设置","settings");}
  else if(name=="config"){for(auto&[p,d]:documents)if(extension(p)=="py")add(wide(p).c_str(),"open-file",L"",p);}
@@ -36,7 +39,7 @@ void App::menuClick(float x,float y){for(auto&hit:menuHits)if(contains(hit.box,x
 LRESULT CALLBACK App::MenuProc(HWND h,UINT m,WPARAM w,LPARAM l){App*a=(App*)GetWindowLongPtrW(h,GWLP_USERDATA);if(m==WM_NCCREATE){a=(App*)((CREATESTRUCTW*)l)->lpCreateParams;SetWindowLongPtrW(h,GWLP_USERDATA,(LONG_PTR)a);}return a?a->menuProc(h,m,w,l):DefWindowProcW(h,m,w,l);}
 LRESULT App::menuProc(HWND h,UINT m,WPARAM w,LPARAM l){switch(m){case WM_ERASEBKGND:return 1;case WM_PAINT:{PAINTSTRUCT ps;BeginPaint(h,&ps);if(!menuPaint.rt)menuPaint.init(h,d2d.Get(),dw.Get(),fontCollection.Get(),dpi);if(menuPaint.rt){menuPaint.begin();renderMenu();menuPaint.end();}EndPaint(h,&ps);return 0;}case WM_MOUSEMOVE:{int next=-1;for(auto&hit:menuHits)if(contains(hit.box,dip(GET_X_LPARAM(l)),dip(GET_Y_LPARAM(l))))next=hit.index;if(next!=menuHover){menuHover=next;InvalidateRect(h,nullptr,FALSE);}return 0;}case WM_LBUTTONUP:menuClick(dip(GET_X_LPARAM(l)),dip(GET_Y_LPARAM(l)));return 0;case WM_ACTIVATE:if(LOWORD(w)==WA_INACTIVE&&h==menuWindow)closeMenu();return 0;case WM_KEYDOWN:if(key((UINT)w,false,false,false))return 0;break;}return DefWindowProcW(h,m,w,l);}
 void App::showPopup(std::string mode,std::string data){
- if(popup)closePopup();closeMenu();popupMode=mode;popupData=data;popupError.clear();popupHover=-1;selected=0;
+ quickPick.close();if(popup)closePopup();closeMenu();popupMode=mode;popupData=data;popupError.clear();popupHover=-1;selected=0;
  float W=(mode=="palette"||mode=="files")?570:mode=="help"?500:440,H=250;
  if(mode=="settings")H=370;else if(mode=="help")H=620;else if(mode=="runtime")H=365;else if(mode=="stdin")H=310;else if(mode=="palette"||mode=="files")H=490;else if(mode=="replace")H=290;else if(mode=="delete"||mode=="restore")H=210;
  RECT parent;GetWindowRect(window,&parent);H=std::min(H,dip(parent.bottom-parent.top)-50);W=std::min(W,dip(parent.right-parent.left)-30);int xx=parent.left+(parent.right-parent.left-px(W))/2,yy=parent.top+(parent.bottom-parent.top-px(H))/2;if(mode=="palette"||mode=="files")yy=parent.top+px(std::max(20.f,layout.h*.16f));
@@ -49,7 +52,43 @@ void App::showPopup(std::string mode,std::string data){
 }
 void App::resizePopup(){if(!popup)return;RECT r;GetClientRect(popup,&r);float W=dip(r.right);if(popupEdit){float x=popupMode=="palette"||popupMode=="files"?49.f:36.f,y=popupMode=="palette"||popupMode=="files"?18.f:popupMode=="stdin"?96.f:113.f,h=popupMode=="stdin"?121.f:25.f;if(popupMode=="find"||popupMode=="replace")y=100;SetWindowPos(popupEdit,nullptr,px(x),px(y),px(W-x-(x==49?65:36)),px(h),SWP_NOZORDER|SWP_NOACTIVATE);if(popupEdit2)SetWindowPos(popupEdit2,nullptr,px(36),px(151),px(W-72),px(25),SWP_NOZORDER|SWP_NOACTIVATE);}}
 void App::closePopup(){if(!popup)return;auto h=popup;popup=nullptr;popupEdit=nullptr;popupEdit2=nullptr;DestroyWindow(h);popupPaint.release();popupHits.clear();if(dimmer){DestroyWindow(dimmer);dimmer=nullptr;}popupMode.clear();popupError.clear();SetForegroundWindow(window);SetFocus(editor);invalidate();}
-void App::paletteFilter(){if(!popupEdit)return;auto query=lower(utf8(editText(popupEdit)));paletteItems.clear();for(auto&[p,d]:documents)if(lower(p).find(query)!=p.npos)paletteItems.push_back({wide(baseName(p)),wide(p),"open-file",p});if(popupMode!="files"){std::vector<PaletteItem>commands={{L"新建文件",L"Ctrl Alt N","new-file",""},{L"运行当前 Python 文件",L"Shift F10","run",""},{L"运行全部单元测试",L"unittest","tests",""},{L"在项目中查找",L"Ctrl Shift F","search",""},{L"打开项目终端",L"Alt F12","terminal",""},{L"保存全部文件",L"Ctrl S","save",""},{L"导出整个项目",L"JSON","export",""},{L"导入文件 / 项目",L"","import",""},{L"创建本地检查点",L"","checkpoint",""},{L"外观设置",L"主题 / 字号","settings",""},{L"设置程序标准输入",L"input()","stdin",""},{L"快捷键与帮助",L"","help",""}};for(auto&item:commands)if(lower(utf8(item.label)).find(query)!=std::string::npos)paletteItems.push_back(item);}if(paletteItems.size()>100)paletteItems.resize(100);selected=std::min(selected,std::max(0,(int)paletteItems.size()-1));InvalidateRect(popup,nullptr,FALSE);}
+void App::paletteFilter() {
+    if (!popupEdit) return;
+    const auto query = lower(utf8(editText(popupEdit)));
+    paletteItems.clear();
+    for (const auto& [path, document] : documents) {
+        if (lower(path).find(query) != std::string::npos) {
+            paletteItems.push_back({wide(baseName(path)), wide(path), "open-file", path});
+        }
+    }
+    if (popupMode != "files") {
+        const std::vector<PaletteItem> commands = {
+            {L"最近的文件", L"Ctrl E", "recent-files", ""},
+            {L"文件结构", L"Ctrl F12", "file-outline", ""},
+            {L"后退", L"Ctrl Alt ←", "navigate-back", ""},
+            {L"前进", L"Ctrl Alt →", "navigate-forward", ""},
+            {L"重新打开关闭的标签", L"Ctrl Shift T", "reopen-tab", ""},
+            {L"新建文件", L"Ctrl Alt N", "new-file", ""},
+            {L"运行当前 Python 文件", L"Shift F10", "run", ""},
+            {L"运行全部单元测试", L"unittest", "tests", ""},
+            {L"在项目中查找", L"Ctrl Shift F", "search", ""},
+            {L"打开项目终端", L"Alt F12", "terminal", ""},
+            {L"保存全部文件", L"Ctrl S", "save", ""},
+            {L"导出整个项目", L"JSON", "export", ""},
+            {L"导入文件 / 项目", L"", "import", ""},
+            {L"创建本地检查点", L"", "checkpoint", ""},
+            {L"外观设置", L"主题 / 字号", "settings", ""},
+            {L"设置程序标准输入", L"input()", "stdin", ""},
+            {L"快捷键与帮助", L"", "help", ""}
+        };
+        for (const auto& command : commands) {
+            if (lower(utf8(command.label)).find(query) != std::string::npos) paletteItems.push_back(command);
+        }
+    }
+    if (paletteItems.size() > 100) paletteItems.resize(100);
+    selected = std::min(selected, std::max(0, static_cast<int>(paletteItems.size()) - 1));
+    InvalidateRect(popup, nullptr, FALSE);
+}
 void App::paletteChoose(int index){if(index<0||index>=(int)paletteItems.size())return;auto item=paletteItems[index];closePopup();if(item.action=="search")setTool("search");else action(item.action,item.data);}
 void App::popupSubmit(){try{
  auto mode=popupMode,data=popupData;std::string value=popupEdit?utf8(editText(popupEdit)):"";

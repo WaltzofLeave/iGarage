@@ -30,6 +30,7 @@
 #include "../vendor/json.hpp"
 #include "../vendor/scintilla/include/Scintilla.h"
 #include "../vendor/lexilla/include/SciLexer.h"
+#include "editor/document.h"
 namespace fs=std::filesystem;
 using json=nlohmann::json;
 using Microsoft::WRL::ComPtr;
@@ -68,8 +69,6 @@ public:
  void push(std::function<void()>f){{std::lock_guard l(mutex);tasks.push_back(std::move(f));}cv.notify_one();}
  void drain(){auto p=std::make_shared<std::promise<void>>();auto f=p->get_future();push([p]{p->set_value();});f.wait();}
 };
-struct Document{std::string path,cache;sptr_t pointer=0;uint64_t revision=0,savedRevision=0;bool loaded=false,dirty=false,pending=false;};
-struct Symbol{std::string name;int line=0,depth=0;char kind='f';};
 struct SearchHit{std::string path,text;int line=0;};
 struct FileEvent{std::string path,text,error;uint64_t revision=0;bool load=false;};
 constexpr UINT WM_ORBIT_FILE=WM_APP+1,WM_ORBIT_OUTPUT=WM_APP+2,WM_ORBIT_DONE=WM_APP+3,WM_ORBIT_SEARCH=WM_APP+4;
