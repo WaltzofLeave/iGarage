@@ -1,20 +1,20 @@
 {
   "checks": 21,
   "measurements": {
-    "checkpoint_listing_background_completion_ms": 93.3037,
-    "checkpoint_listing_ui_submit_ms": 0.0067,
-    "direct_3MiB_long_line_append_ms": 7.1922,
+    "checkpoint_listing_background_completion_ms": 110.9472,
+    "checkpoint_listing_ui_submit_ms": 0.0094,
+    "direct_3MiB_long_line_append_ms": 7.1809,
     "multiline_display_bytes_after_4MiB": 1857920,
     "python_1MiB_output_queue_peak_bytes": 1048576,
-    "python_1MiB_single_line_wall_ms": 54.1344,
+    "python_1MiB_single_line_wall_ms": 58.9924,
     "tree_20000_files_2000_folders_flatten_samples_ms": [
-      1.4015,
-      1.8819,
-      1.4279,
-      1.3326,
-      1.4393
+      1.8194,
+      1.7676,
+      1.3662,
+      1.3179,
+      1.426
     ],
-    "tree_20000_paths_index_build_ms": 9.8834
+    "tree_20000_paths_index_build_ms": 9.5675
   },
   "passed": true,
   "results": [

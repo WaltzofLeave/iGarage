@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-07",
+  "passed": true,
+  "application_sha256": "0245f0d635f305082d663f4294214f2dbb4f460513f81dc6e8e8dc4147ab0806",
+  "native_checks": 189,
+  "suites": {
+    "native-self-test.json": 32,
+    "workbench-tests.json": 37,
+    "native-integration-test.json": 18,
+    "performance-tests.json": 21,
+    "icon-tests.json": 10,
+    "language-tests.json": 71
+  },
+  "independent_contract_core": {
+    "checks": 24,
+    "passed": true,
+    "included_in_native_total": true,
+    "excluded_from_target": [
+      "GUI",
+      "Scintilla",
+      "Windows process transport",
+      "Pyrefly executable"
+    ],
+    "tested_toolchain": "Windows x64 MSVC C++20"
+  },
+  "clean_source_rebuild": {
+    "passed": true,
+    "compiler_warnings": 0,
+    "independent_core_checks": 24,
+    "language_checks": 71,
+    "backend_preparation": "Offline, pinned verified upstream archive cache"
+  },
+  "portable_spaced_path": {
+    "passed": true,
+    "native_checks": 189
+  },
+  "desktop_delivery": {
+    "default": "Windows Desktop / Orbit IDE / fresh dated binary-hash release directory",
+    "existing_projects_and_releases_preserved": true,
+    "extraction_unit_checks": 5,
+    "extraction_unit_checks_passed": true
+  },
+  "remote_analysis": {
+    "stage": "Transport/session/backend configuration/URI interface only",
+    "external_server_configured": false,
+    "real_network_validation": false,
+    "simulated_transport_validation": true,
+    "remaining": [
+      "production remote connector",
+      "authentication/deployment",
+      "project/environment synchronization",
+      "real network latency tests"
+    ]
+  },
+  "local_request_measurements": {
+    "warm_median_ms": 0.2723,
+    "samples": 12,
+    "first_stdlib_ms": 202.3355,
+    "scope": "Small isolated local fixture and pipe/event handling; excludes real network and screen presentation."
+  },
+  "visual_scope": "No fresh live visual claim. The earlier window activation/capture failure remains documented in QA."
+}

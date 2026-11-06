@@ -136,7 +136,7 @@ std::string frame(const Json& message) {
     return "Content-Length: " + std::to_string(body.size()) + "\r\n\r\n" + body;
 }
 std::string fileUri(std::string_view path) {
-    std::string uri = "file:///";
+    std::string uri = path.starts_with('/') ? "file://" : "file:///";
     if (path.starts_with("\\\\")) { uri = "file://"; path.remove_prefix(2); }
     constexpr char digits[] = "0123456789ABCDEF";
     for (const unsigned char c : path) {
@@ -149,16 +149,19 @@ std::string fileUri(std::string_view path) {
 std::optional<std::string> uriPath(std::string_view uri) {
     if (!uri.starts_with("file://")) return {};
     uri.remove_prefix(7);
+    if (uri.empty() || uri.find_first_of("?#") != uri.npos) return {};
     std::string result;
+    const bool windowsDrive = uri.size() >= 4 && uri[0] == '/' && std::isalpha(static_cast<unsigned char>(uri[1])) && uri[2] == ':' && uri[3] == '/';
+    const bool windowsPath = !uri.starts_with('/') || windowsDrive;
     if (!uri.starts_with('/')) result = "\\\\";
-    else uri.remove_prefix(1);
+    else if (windowsDrive) uri.remove_prefix(1);
     for (std::size_t i = 0; i < uri.size(); ++i) {
         if (uri[i] == '%') {
             if (i + 2 >= uri.size() || hex(uri[i + 1]) < 0 || hex(uri[i + 2]) < 0) return {};
             const char c = static_cast<char>((hex(uri[i + 1]) << 4) | hex(uri[i + 2]));
             if (!c) return {};
             result += c; i += 2;
-        } else result += uri[i] == '/' ? '\\' : uri[i];
+        } else result += windowsPath && uri[i] == '/' ? '\\' : uri[i];
     }
     return result;
 }

@@ -1,6 +1,8 @@
 #include "../app.h"
 
 #include <cctype>
+#include "backend.h"
+#include "client.h"
 
 namespace {
 constexpr UINT languageWake = WM_APP + 20;
@@ -26,7 +28,10 @@ void App::startLanguage(bool force) {
     }
     orbit::language::ProcessOptions options{executable, root,
         {L"lsp", L"--threads", L"2", L"--workspace-indexing-limit", L"2000"}};
-    language.start(std::move(options), utf8(interpreter), [owner = window] { PostMessageW(owner, languageWake, 0, 0); });
+    auto session = orbit::language::pyreflySession(orbit::language::fileUri(utf8(root.wstring())),
+        utf8(root.filename().wstring()), utf8(interpreter), GetCurrentProcessId());
+    language.start(std::make_unique<orbit::language::ProcessTransport>(std::move(options)),
+        std::move(session), [owner = window] { PostMessageW(owner, languageWake, 0, 0); });
     languageStatus = language.status();
     SetTimer(window, 7, 100, nullptr);
     // Snapshot only opened, bounded Python documents. Future edits use incremental changes.

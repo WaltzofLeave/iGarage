@@ -41,8 +41,8 @@ bool writeAll(HANDLE output, std::string_view text) {
     return true;
 }
 } // namespace
-Client::~Client() { stop(); }
-void Client::start(ProcessOptions options, std::function<void()> wake) {
+ProcessTransport::~ProcessTransport() { stop(); }
+void ProcessTransport::start(Wake wake) {
     stop();
     {
         std::lock_guard lock(mutex_);
@@ -58,9 +58,9 @@ void Client::start(ProcessOptions options, std::function<void()> wake) {
             throw std::runtime_error("Cannot configure language-server job");
         }
     }
-    worker_ = std::thread([this, options = std::move(options)] { run(options); });
+    worker_ = std::thread([this, options = options_] { run(options); });
 }
-void Client::stop() {
+void ProcessTransport::stop() noexcept {
     {
         std::lock_guard lock(mutex_);
         stopping_ = true;
@@ -73,7 +73,7 @@ void Client::stop() {
     job_ = nullptr; processId_ = 0;
     outgoing_.clear(); incoming_.clear(); queuedBytes_ = incomingBytes_ = 0;
 }
-bool Client::send(Json message) {
+bool ProcessTransport::send(Json message) {
     const auto bytes = cost(message);
     std::lock_guard lock(mutex_);
     if (stopping_ || bytes > queueLimit || queuedBytes_ + bytes > queueLimit || outgoing_.size() >= 512) return false;
@@ -83,15 +83,15 @@ bool Client::send(Json message) {
     condition_.notify_one();
     return true;
 }
-std::vector<ProcessEvent> Client::drain() {
+std::vector<TransportEvent> ProcessTransport::drain() {
     std::lock_guard lock(mutex_);
-    std::vector<ProcessEvent> result;
+    std::vector<TransportEvent> result;
     result.reserve(incoming_.size());
     while (!incoming_.empty()) { result.push_back(std::move(incoming_.front())); incoming_.pop_front(); }
     incomingBytes_ = 0;
     return result;
 }
-void Client::emit(ProcessEvent event) {
+void ProcessTransport::emit(TransportEvent event) {
     bool wake = false;
     {
         std::lock_guard lock(mutex_);
@@ -100,13 +100,13 @@ void Client::emit(ProcessEvent event) {
         while (incoming_.size() >= 128 || incomingBytes_ + bytes > queueLimit) {
             // Replace superseded diagnostics/progress, never block a pipe reader on the UI.
             const auto replaceable = std::find_if(incoming_.begin(), incoming_.end(), [](const auto& entry) {
-                return entry.kind == ProcessEvent::Kind::Message && entry.message.contains("method") && !entry.message.contains("id");
+                return entry.kind == TransportEvent::Kind::Message && entry.message.contains("method") && !entry.message.contains("id");
             });
             if (replaceable != incoming_.end()) {
                 incomingBytes_ -= cost(replaceable->message) + replaceable->error.size(); incoming_.erase(replaceable);
             } else {
                 incoming_.clear(); incomingBytes_ = 0;
-                event = {ProcessEvent::Kind::Stopped, {}, "Python analysis response queue exceeded its budget"};
+                event = {TransportEvent::Kind::Disconnected, {}, "Python analysis response queue exceeded its budget"};
                 stopping_ = true; if (job_) TerminateJobObject(job_, 1); condition_.notify_all(); break;
             }
         }
@@ -116,7 +116,7 @@ void Client::emit(ProcessEvent event) {
     }
     if (wake && wake_) wake_();
 }
-void Client::run(ProcessOptions options) {
+void ProcessTransport::run(ProcessOptions options) {
     Handle inputRead, inputWrite, outputRead, outputWrite, errorRead, errorWrite;
     Handle process, primaryThread;
     std::thread writer, errors;
@@ -180,7 +180,7 @@ void Client::run(ProcessOptions options) {
                     if (!writeAll(inputWrite.value, frame(message))) break;
                 }
             } catch (...) {}
-            if (!stopping_) emit({ProcessEvent::Kind::Stopped, {}, "Python analysis request could not be written"});
+            if (!stopping_) emit({TransportEvent::Kind::Disconnected, {}, "Python analysis request could not be written"});
             {
                 std::lock_guard lock(mutex_);
                 stopping_ = true;
@@ -190,11 +190,11 @@ void Client::run(ProcessOptions options) {
             }
             condition_.notify_all();
         });
-        emit({ProcessEvent::Kind::Started, {}, {}});
+        emit({TransportEvent::Kind::Connected, {}, {}});
         FrameDecoder decoder;
         char bytes[16384]; DWORD read = 0;
         while (!stopping_ && ReadFile(outputRead.value, bytes, sizeof(bytes), &read, nullptr) && read) {
-            for (auto& message : decoder.feed(std::string_view(bytes, read))) emit({ProcessEvent::Kind::Message, std::move(message), {}});
+            for (auto& message : decoder.feed(std::string_view(bytes, read))) emit({TransportEvent::Kind::Message, std::move(message), {}});
         }
         if (!stopping_) error = "Python analysis service disconnected";
     } catch (const std::exception& exception) { error = exception.what(); }
@@ -203,7 +203,7 @@ void Client::run(ProcessOptions options) {
         if (job_) TerminateJobObject(job_, 0);
     }
     // Waking the writer is separate from stopping_, so a terminal event can still be delivered.
-    if (!error.empty()) emit({ProcessEvent::Kind::Stopped, {}, error});
+    if (!error.empty()) emit({TransportEvent::Kind::Disconnected, {}, error});
     stopping_ = true;
     condition_.notify_all();
     if (writer.joinable()) writer.join();

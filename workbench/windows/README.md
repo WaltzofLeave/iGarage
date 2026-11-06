@@ -157,3 +157,25 @@ See [the design and redistribution review](docs/python-language-service.md),
 `qa/language-tests.json`, and [the architecture](docs/architecture.md).
 
 Build a checked portable ZIP with `python tools/package_portable.py --output build/Orbit-Workbench-Windows-x64.zip`.
+
+On Windows, packaging also extracts a ready-to-run copy under **Desktop → Orbit
+IDE → Orbit-Windows-<date>-<binary hash>**. Desktop lookup honors Windows folder
+redirection/OneDrive. Each delivery uses a fresh directory, preserving earlier
+versions, settings and projects. Use `--no-desktop` for CI or verification-only
+packaging. Reports include the exact delivered folder.
+
+## Analysis frontend/backend boundary
+
+The editor now injects a `Transport` into an OS-independent LSP session. Backend
+configuration and Windows/POSIX workspace URI mapping are separate modules, so
+a future remote connector can reuse completion, diagnostics and editing logic.
+The current application continues to use local Pyrefly; no server is configured
+or contacted in this stage. Project synchronization and a production connection
+module remain future work, as requested.
+
+`build.cmd --language-core-test` builds the session/protocol contract checks
+without GUI, Scintilla, the Windows process adapter or Pyrefly. The normal
+`--language-test` includes these 24 simulated endpoint checks and the existing
+47 real-server/native-editor checks. See [the interface contract](docs/language-service-contract.md).
+Run `python -m unittest discover -s tools -p test_portable_delivery.py` for the
+five extraction/preservation checks.

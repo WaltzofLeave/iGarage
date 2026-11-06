@@ -1,47 +1,57 @@
 #include "service.h"
+#include <stdexcept>
+#include <utility>
 
 namespace orbit::language {
-namespace {
-std::string pathUtf8(const std::filesystem::path& path) {
-    const auto text = path.u8string();
-    return std::string(text.begin(), text.end());
-}
-} // namespace
-void Service::start(ProcessOptions options, std::string interpreter, std::function<void()> wake) {
+Service::~Service() { stop(); }
+void Service::start(std::unique_ptr<Transport> transport, SessionOptions options, Transport::Wake wake) {
     stop();
-    root_ = options.root;
-    interpreter_ = std::move(interpreter);
     started_ = std::chrono::steady_clock::now();
     initializationMs_ = 0; staleResponses_ = 0;
     status_ = "正在启动代码分析…";
-    try { client_.start(std::move(options), std::move(wake)); initializing_ = true; }
-    catch (const std::exception& error) { status_ = error.what(); }
+    try {
+        if (!transport) throw std::invalid_argument("Language session requires a transport");
+        uris_ = WorkspaceUris(options.rootUri);
+        options_ = std::move(options);
+        transport_ = std::move(transport);
+        transport_->start(std::move(wake)); initializing_ = true;
+    } catch (const std::exception& error) {
+        if (transport_) { transport_->stop(); transport_.reset(); }
+        status_ = error.what();
+    }
 }
 void Service::stop() {
-    client_.stop();
+    if (transport_) { transport_->stop(); transport_.reset(); }
     documents_.clear(); pending_.clear(); ready_ = initializing_ = canResolve_ = false;
     diagnosticsChanged_ = true;
 }
 bool Service::send(Json value) {
     value["jsonrpc"] = "2.0";
-    if (client_.send(std::move(value))) return true;
+    if (transport_ && transport_->send(std::move(value))) return true;
     ready_ = false;
     status_ = "代码分析连接不可用，可从工具菜单重新启动";
     return false;
 }
-std::string Service::uri(const std::string& path) const { return fileUri(pathUtf8(root_ / std::filesystem::u8path(path))); }
-Json Service::configuration() const {
-    return {{"pythonPath", interpreter_},
-        {"analysis", {{"diagnosticMode", "openFilesOnly"}, {"autoImportCompletions", true}, {"completeFunctionParens", false}}},
-        {"pyrefly", {{"typeCheckingMode", "basic"}, {"diagnosticMode", "openFilesOnly"}, {"streamDiagnostics", true}}}};
+std::string Service::uri(const std::string& path) const { return uris_.document(path); }
+Json Service::configuration(std::string_view section) const {
+    const auto* value = &options_.settings;
+    while (!section.empty()) {
+        const auto dot = section.find('.');
+        const auto component = std::string(section.substr(0, dot));
+        if (!value->is_object() || !value->contains(component)) return nullptr;
+        value = &(*value)[component];
+        if (dot == section.npos) break;
+        section.remove_prefix(dot + 1);
+    }
+    return *value;
 }
 void Service::sendOpen(const std::string& path, OpenDocument& document) {
     if (!ready_ || document.sent) return;
     document.sent = send({{"method", "textDocument/didOpen"}, {"params", {{"textDocument", {
-        {"uri", uri(path)}, {"languageId", "python"}, {"version", document.revision}, {"text", document.buffer.text()}}}}}});
+        {"uri", uri(path)}, {"languageId", options_.languageId}, {"version", document.revision}, {"text", document.buffer.text()}}}}}});
 }
 void Service::open(std::string path, std::string text, std::uint64_t revision) {
-    if (text.size() > fileLimit || documents_.size() >= 64 && !documents_.contains(path)) return;
+    if (!WorkspaceUris::validRelative(path) || text.size() > fileLimit || documents_.size() >= 64 && !documents_.contains(path)) return;
     const auto found = documents_.find(path);
     if (found != documents_.end() && found->second.revision == revision && found->second.buffer.text() == text) return;
     close(path);
@@ -114,14 +124,9 @@ void Service::serverRequest(const Json& message) {
         result = Json::array();
         for (const auto& item : message["params"]["items"]) {
             const auto section = item.value("section", "");
-            const auto config = configuration();
-            if (section == "python") result.push_back(config);
-            else if (section == "python.analysis") result.push_back(config["analysis"]);
-            else if (section == "python.pyrefly") result.push_back(config["pyrefly"]);
-            else if (section.empty()) result.push_back(Json{{"python", config}});
-            else result.push_back(nullptr);
+            result.push_back(configuration(section));
         }
-    } else if (method == "workspace/workspaceFolders") result = Json::array({{{"uri", fileUri(pathUtf8(root_))}, {"name", pathUtf8(root_.filename())}}});
+    } else if (method == "workspace/workspaceFolders") result = Json::array({{{"uri", uris_.root()}, {"name", options_.workspaceName}}});
     else if (method == "workspace/applyEdit") result = {{"applied", false}, {"failureReason", "Use an explicit editor action to apply changes"}};
     else if (method != "client/registerCapability" && method != "client/unregisterCapability" && method != "window/workDoneProgress/create" &&
              method != "workspace/diagnostic/refresh" && method != "workspace/semanticTokens/refresh" && method != "workspace/inlayHint/refresh") {
@@ -132,9 +137,10 @@ void Service::serverRequest(const Json& message) {
 std::vector<Result> Service::poll() {
     diagnosticsChanged_ = false;
     std::vector<Result> results;
-    for (auto& event : client_.drain()) {
+    if (!transport_) return results;
+    for (auto& event : transport_->drain()) {
         try {
-            if (event.kind == ProcessEvent::Kind::Started) {
+            if (event.kind == TransportEvent::Kind::Connected) {
                 Json capabilities{
                     {"general", {{"positionEncodings", {"utf-16"}}}},
                     {"workspace", {{"configuration", true}, {"workspaceFolders", true}}},
@@ -148,13 +154,13 @@ std::vector<Result> Service::poll() {
                         {"signatureHelp", {{"signatureInformation", {{"parameterInformation", {{"labelOffsetSupport", true}}}, {"activeParameterSupport", true}}}}},
                         {"hover", {{"contentFormat", {"plaintext", "markdown"}}}}
                     }}};
-                send({{"id", 1}, {"method", "initialize"}, {"params", {{"processId", GetCurrentProcessId()},
-                    {"clientInfo", {{"name", "Orbit Native"}, {"version", "1.1"}}}, {"rootUri", fileUri(pathUtf8(root_))},
-                    {"workspaceFolders", Json::array({{{"uri", fileUri(pathUtf8(root_))}, {"name", pathUtf8(root_.filename())}}})},
-                    {"capabilities", capabilities}, {"initializationOptions", configuration()}}}});
+                send({{"id", 1}, {"method", "initialize"}, {"params", {{"processId", options_.parentProcessId ? Json(*options_.parentProcessId) : Json(nullptr)},
+                    {"clientInfo", {{"name", "Orbit Native"}, {"version", "1.1"}}}, {"rootUri", uris_.root()},
+                    {"workspaceFolders", Json::array({{{"uri", uris_.root()}, {"name", options_.workspaceName}}})},
+                    {"capabilities", capabilities}, {"initializationOptions", options_.initializationOptions}}}});
                 continue;
             }
-            if (event.kind == ProcessEvent::Kind::Stopped) {
+            if (event.kind == TransportEvent::Kind::Disconnected) {
                 ready_ = initializing_ = false; status_ = event.error; pending_.clear();
                 for (auto& [path, document] : documents_) document.diagnostics.clear();
                 diagnosticsChanged_ = true; continue;
@@ -164,13 +170,13 @@ std::vector<Result> Service::poll() {
                 if (message.contains("id")) { serverRequest(message); continue; }
                 if (message["method"] == "textDocument/publishDiagnostics" && ready_) {
                     const auto& parameters = message["params"];
-                    for (auto& [path, document] : documents_) {
-                        if (parameters.value("uri", "") != uri(path)) continue;
-                        if (parameters.contains("version") && !parameters["version"].is_null() && parameters["version"].get<std::uint64_t>() != document.revision) { ++staleResponses_; break; }
-                        document.diagnostics = language::diagnostics(parameters.value("diagnostics", Json::array()));
-                        diagnosticsChanged_ = true;
-                        break;
-                    }
+                    const auto path = uris_.relative(parameters.value("uri", ""));
+                    const auto found = path ? documents_.find(*path) : documents_.end();
+                    if (found == documents_.end()) continue;
+                    auto& document = found->second;
+                    if (parameters.contains("version") && !parameters["version"].is_null() && parameters["version"].get<std::uint64_t>() != document.revision) { ++staleResponses_; continue; }
+                    document.diagnostics = language::diagnostics(parameters.value("diagnostics", Json::array()));
+                    diagnosticsChanged_ = true;
                 }
                 continue;
             }
@@ -186,10 +192,10 @@ std::vector<Result> Service::poll() {
                 canResolve_ = capabilities.contains("completionProvider") && capabilities["completionProvider"].is_object() &&
                     capabilities["completionProvider"].value("resolveProvider", false);
                 ready_ = true;
-                status_ = "代码分析就绪 · Pyrefly";
+                status_ = "代码分析就绪 · " + options_.serverName;
                 initializationMs_ = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started_).count();
                 send({{"method", "initialized"}, {"params", Json::object()}});
-                send({{"method", "workspace/didChangeConfiguration"}, {"params", {{"settings", {{"python", configuration()}}}}}});
+                send({{"method", "workspace/didChangeConfiguration"}, {"params", {{"settings", options_.settings}}}});
                 for (auto& [path, document] : documents_) sendOpen(path, document);
                 continue;
             }
@@ -207,7 +213,7 @@ std::vector<Result> Service::poll() {
     }
     // A stalled provider cannot retain requests indefinitely.
     if (initializing_ && std::chrono::steady_clock::now() - started_ > std::chrono::seconds(15)) {
-        client_.stop(); initializing_ = false; status_ = "代码分析启动超时，可从工具菜单重新启动";
+        transport_->stop(); initializing_ = false; status_ = "代码分析启动超时，可从工具菜单重新启动";
     }
     for (auto it = pending_.begin(); it != pending_.end();) {
         if (std::chrono::steady_clock::now() - it->second.started > std::chrono::seconds(10)) {

@@ -16,8 +16,11 @@ Language sessions keep a bounded UTF-8 mirror for protocol position conversion.
 | `src/ui/quick_pick.*` | Reusable native filtered list. Owns its popup, input font, brush, and rendering resources. |
 | `src/ui/icons.*` | Typed asset registry, file/symbol mappings, licensed SVG loading, bounded shared GPU bitmap cache and Scintilla fold images. |
 | `src/language/protocol.*` | Window-independent framing, UTF-8/UTF-16 positions, validated completion transactions and hint models. |
-| `src/language/client.*` | Hidden Windows process, restricted inherited pipes, bounded queues, worker threads and job-owned lifetime. |
+| `src/language/transport.h` | Injectable connection contract, parsed JSON-RPC events and owned lifecycle; no OS dependency. |
+| `src/language/client.*` | `ProcessTransport`: hidden Windows process, restricted inherited pipes, bounded queues, worker threads and job-owned lifetime. |
 | `src/language/service.*` | LSP capabilities/configuration, incremental document mirrors, cancellation, revision checks and diagnostics. |
+| `src/language/workspace_uri.*` | Frontend-relative document identity ↔ backend Windows/POSIX/UNC URI mapping without local filesystem access. |
+| `src/language/backend.*` | Pyrefly-specific initialization/profile settings, kept outside the generic session. |
 | `src/language/workbench_language.cpp` | Scintilla adapter: requests, atomic edits, calltips and Problems panel integration. |
 | `src/ui/completion_popup.*` | Nonactivating native candidate/documentation window; retained swap chain and DirectWrite formats. |
 | `src/runtime/output_buffer.*` | UI-independent bounded transport, cancellation, and UTF-8-safe line display limits. |
@@ -68,7 +71,8 @@ semantic refactoring and debugging remain future work.
 ## Language-service boundaries
 
 The UI thread owns `Service` and document revisions. It never performs pipe I/O
-or waits for analysis. `Client` launches the process on a worker, serializes and
+or waits for analysis. An injected `Transport` owns the connection. The current
+`ProcessTransport` launches the process on a worker, serializes and
 writes on a second worker, and drains stderr on a third. Its wake callback only
 posts a window message. A 100 ms maintenance timer handles failure/timeouts; normal
 responses wake the UI immediately. The analysis engine uses two worker threads.
@@ -94,6 +98,12 @@ swap chain or font formats for every keystroke. It borrows the shared icon atlas
 Signature and hover calltips stay native to Scintilla. Calltips wrap with a byte
 mapping that preserves Unicode and active-argument highlighting, capped at
 2,200 bytes and 16 lines. Neither surface activates a modal overlay.
+
+The session/core headers no longer include the Windows process adapter. Backend
+workspace URIs, interpreter settings and optional parent PID are supplied by the
+host; they are not inferred from the frontend filesystem or process namespace.
+The standalone contract suite uses a simulated endpoint with POSIX URIs while
+the production adapter remains local. See [the remote-interface contract](language-service-contract.md).
 
 ## Output and checkpoint budgets
 

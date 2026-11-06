@@ -1,6 +1,9 @@
 #include "../app.h"
 #include <numeric>
 #include <psapi.h>
+#include "../language/backend.h"
+#include "../language/client.h"
+#include "language_contract_tests.h"
 
 int App::languageTest(const fs::path& report) {
     using namespace orbit::language;
@@ -8,6 +11,7 @@ int App::languageTest(const fs::path& report) {
     const auto check = [&](std::string name, bool passed) { checks.push_back({{"name", std::move(name)}, {"passed", passed}}); };
     const auto throws = [](auto operation) { try { operation(); return false; } catch (...) { return true; } };
     Service server;
+    for (auto& result : orbit::tests::languageContractChecks()) checks.push_back(std::move(result));
     std::string previousSession;
     try { previousSession = readFile(dataDir / L"session.json"); } catch (...) {}
     const auto responseEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
@@ -70,7 +74,11 @@ int App::languageTest(const fs::path& report) {
         const std::string code = "from pathlib import Path\nfrom model import User\npath = Path(\"demo.txt\")\nuser = User()\npath.rea\nuser.gre\n";
         atomicWrite(fixture / L"main.py", code);
         wchar_t interpreter[32768]{}; SearchPathW(nullptr, settings.interpreter.c_str(), L".exe", 32768, interpreter, nullptr);
-        server.start({exeDir / L"services/pyrefly/pyrefly.exe", fixture, {L"lsp", L"--threads", L"2"}}, utf8(interpreter), [responseEvent] { SetEvent(responseEvent); });
+        const auto localSession = pyreflySession(fileUri(utf8(fixture.wstring())),
+            "language-fixture", utf8(interpreter), GetCurrentProcessId());
+        server.start(std::make_unique<ProcessTransport>(ProcessOptions{
+            exeDir / L"services/pyrefly/pyrefly.exe", fixture, {L"lsp", L"--threads", L"2"}}),
+            localSession, [responseEvent] { SetEvent(responseEvent); });
         server.open("main.py", code, 0);
         std::vector<Result> received;
         const auto pump = [&](auto ready, int milliseconds = 10000) {
@@ -166,17 +174,17 @@ int App::languageTest(const fs::path& report) {
         if (process) CloseHandle(process);
         check("language_server_and_workers_exit_on_session_shutdown", waited == WAIT_OBJECT_0 && server.processId() == 0);
         timings["shutdown_ms"] = std::chrono::duration<double, std::milli>(Clock::now() - shutdown).count();
-        server.start({exeDir / L"services/pyrefly/missing.exe", fixture}, "python", [responseEvent] { SetEvent(responseEvent); });
+        server.start(std::make_unique<ProcessTransport>(ProcessOptions{exeDir / L"services/pyrefly/missing.exe", fixture}), localSession, [responseEvent] { SetEvent(responseEvent); });
         check("missing_backend_reports_failure_without_blocking_editor_thread", pump([&] { return server.status().find("Cannot start") != std::string::npos; }));
         server.stop();
 
-        Client invalidPayload;
-        invalidPayload.start({exeDir / L"services/pyrefly/pyrefly.exe", fixture, {L"lsp", L"--threads", L"2"}}, [responseEvent] { SetEvent(responseEvent); });
+        ProcessTransport invalidPayload({exeDir / L"services/pyrefly/pyrefly.exe", fixture, {L"lsp", L"--threads", L"2"}});
+        invalidPayload.start( [responseEvent] { SetEvent(responseEvent); });
         invalidPayload.send({{"invalid_utf8", std::string(1, static_cast<char>(0xff))}});
         bool writeFailure = false;
         const auto failureDeadline = Clock::now() + std::chrono::seconds(3);
         while (!writeFailure && Clock::now() < failureDeadline) {
-            for (const auto& event : invalidPayload.drain()) if (event.kind == ProcessEvent::Kind::Stopped) writeFailure = true;
+            for (const auto& event : invalidPayload.drain()) if (event.kind == TransportEvent::Kind::Disconnected) writeFailure = true;
             if (!writeFailure) WaitForSingleObject(responseEvent, 50);
         }
         invalidPayload.stop();
@@ -239,6 +247,6 @@ int App::languageTest(const fs::path& report) {
     bool passed = true;
     for (const auto& value : checks) passed &= value["passed"].get<bool>();
     atomicWrite(report, json{{"passed", passed}, {"checks", checks.size()}, {"results", checks}, {"measurements", timings},
-        {"scope", "Native protocol/session tests using the pinned real Pyrefly 1.4.1 process. Timings include local transport and response polling, not screen presentation."}}.dump(2));
+        {"scope", "Includes 24 in-memory simulated-remote contract checks and 47 real Pyrefly/native-editor checks. Timings measure the local pinned process and pipe/event handling, not real network or screen presentation."}}.dump(2));
     return passed ? 0 : 1;
 }

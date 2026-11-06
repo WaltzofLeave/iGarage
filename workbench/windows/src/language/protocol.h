@@ -43,7 +43,7 @@ private:
     std::optional<std::size_t> expected_;
 };
 std::string frame(const Json& message);
-std::string fileUri(std::string_view windowsPath);
+std::string fileUri(std::string_view absolutePath);
 std::optional<std::string> uriPath(std::string_view uri);
 std::string plainDocumentation(const Json& value, std::size_t limit = 6000);
 

@@ -1,0 +1,102 @@
+{
+  "checks": 24,
+  "passed": true,
+  "results": [
+    {
+      "name": "posix_workspace_uri_keeps_exactly_three_file_scheme_slashes",
+      "passed": true
+    },
+    {
+      "name": "remote_unicode_document_maps_back_to_local_relative_name",
+      "passed": true
+    },
+    {
+      "name": "remote_diagnostics_cannot_escape_to_neighboring_workspaces",
+      "passed": true
+    },
+    {
+      "name": "encoded_parent_traversal_and_uri_queries_are_rejected",
+      "passed": true
+    },
+    {
+      "name": "posix_backslash_filenames_do_not_alias_frontend_directories",
+      "passed": true
+    },
+    {
+      "name": "relative_document_names_reject_absolute_and_parent_paths",
+      "passed": true
+    },
+    {
+      "name": "windows_backend_root_is_case_insensitive_with_relative_names_retained",
+      "passed": true
+    },
+    {
+      "name": "unc_and_posix_root_workspaces_round_trip",
+      "passed": true
+    },
+    {
+      "name": "session_initializes_over_injected_transport_without_local_backend_process",
+      "passed": true
+    },
+    {
+      "name": "remote_initialize_uses_backend_uri_and_null_parent_process_id",
+      "passed": true
+    },
+    {
+      "name": "backend_interpreter_configuration_does_not_use_frontend_paths",
+      "passed": true
+    },
+    {
+      "name": "unsaved_document_snapshot_uses_remote_uri_and_frontend_revision",
+      "passed": true
+    },
+    {
+      "name": "remote_completion_positions_are_utf16_with_frontend_byte_carets",
+      "passed": true
+    },
+    {
+      "name": "remote_completion_response_keeps_frontend_document_identity",
+      "passed": true
+    },
+    {
+      "name": "remote_diagnostic_uri_is_mapped_to_the_frontend_document",
+      "passed": true
+    },
+    {
+      "name": "unmapped_remote_diagnostics_never_create_frontend_files",
+      "passed": true
+    },
+    {
+      "name": "remote_edits_send_incremental_ranges_instead_of_full_snapshots",
+      "passed": true
+    },
+    {
+      "name": "remote_responses_after_edit_are_canceled_and_discarded",
+      "passed": true
+    },
+    {
+      "name": "old_remote_diagnostic_versions_do_not_restore_stale_squiggles",
+      "passed": true
+    },
+    {
+      "name": "configuration_sections_are_resolved_from_backend_settings",
+      "passed": true
+    },
+    {
+      "name": "remote_disconnect_leaves_editor_mirrors_available_without_analysis",
+      "passed": true
+    },
+    {
+      "name": "session_stops_owned_transport_and_releases_document_mirrors",
+      "passed": true
+    },
+    {
+      "name": "local_backend_parent_pid_is_explicit_not_inferred_by_session",
+      "passed": true
+    },
+    {
+      "name": "invalid_backend_uri_is_rejected_before_a_transport_connects",
+      "passed": true
+    }
+  ]
+}

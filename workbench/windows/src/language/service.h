@@ -1,9 +1,17 @@
 #pragma once
-#include "client.h"
+#include "transport.h"
+#include "workspace_uri.h"
 #include <chrono>
 #include <map>
+#include <memory>
 
 namespace orbit::language {
+struct SessionOptions {
+    std::string rootUri, workspaceName;
+    std::string languageId = "python", serverName = "Language Server";
+    std::optional<std::uint32_t> parentProcessId;
+    Json initializationOptions = Json::object(), settings = Json::object();
+};
 enum class RequestKind { Completion, Resolve, Signature, Hover };
 struct Result {
     RequestKind kind;
@@ -24,7 +32,8 @@ struct OpenDocument {
 class Service {
 public:
     static constexpr std::size_t fileLimit = 2 * 1024 * 1024;
-    void start(ProcessOptions options, std::string interpreter, std::function<void()> wake);
+    ~Service();
+    void start(std::unique_ptr<Transport> transport, SessionOptions options, Transport::Wake wake);
     void stop();
     void open(std::string path, std::string text, std::uint64_t revision);
     void close(const std::string& path);
@@ -40,8 +49,8 @@ public:
     const std::string& status() const { return status_; }
     bool diagnosticsChanged() const { return diagnosticsChanged_; }
     double initializationMs() const { return initializationMs_; }
-    DWORD processId() const { return client_.processId(); }
-    std::size_t peakQueuedBytes() const { return client_.peakQueuedBytes(); }
+    std::uint32_t processId() const { return transport_ ? transport_->processId() : 0; }
+    std::size_t peakQueuedBytes() const { return transport_ ? transport_->peakQueuedBytes() : 0; }
     std::size_t staleResponses() const { return staleResponses_; }
 private:
     struct Pending {
@@ -54,11 +63,11 @@ private:
     bool send(Json value);
     void sendOpen(const std::string& path, OpenDocument& document);
     void serverRequest(const Json& message);
-    Json configuration() const;
+    Json configuration(std::string_view section) const;
     std::string uri(const std::string& path) const;
-    Client client_;
-    std::filesystem::path root_;
-    std::string interpreter_;
+    std::unique_ptr<Transport> transport_;
+    SessionOptions options_;
+    WorkspaceUris uris_;
     std::map<std::string, OpenDocument> documents_;
     std::map<int, Pending> pending_;
     int nextId_ = 2;

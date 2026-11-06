@@ -140,3 +140,36 @@ offline backend cache. The rebuilt executable passed 32 baseline + 47 language
 checks. A separate fresh portable-ZIP extraction passed all 165 native checks,
 including the real bundled analysis process. Backend and redistribution-notice
 hashes matched in both locations. See `qa/language-delivery-check.json`.
+
+## 2026-11-07: generic analysis interface and Desktop delivery
+
+All 189 native checks passed: the previous 165 plus 24 transport/session contract
+checks. The language suite now contains 71 checks (24 simulated endpoint + 47
+real-server/native-editor checks). The default app build and the independent
+core target completed without compiler warnings. See `qa/transport-contract-tests.json`,
+`qa/transport-followup.json` and [the interface contract](docs/language-service-contract.md).
+
+The independent core target excludes the GUI, Scintilla, Windows process adapter
+and Pyrefly executable. A fresh tracked-source export built this target, passed
+all 24 checks, rebuilt the complete application and passed all 71 language
+checks with the checksum-verified offline backend cache. A separate portable
+extraction into a directory with spaces passed all 189 native checks.
+
+The simulated endpoint checks cover POSIX/Windows/UNC roots, Unicode and escaped
+paths, workspace boundaries, backslash filename aliases, invalid-root rejection
+before connection, null remote parent PID, backend interpreter settings, UTF-16,
+incremental changes, cancellation, diagnostics, stale versions and disconnects.
+No external analysis server was configured or contacted. A real connector,
+deployment/authentication, repository/environment synchronization and real network
+measurements remain outside this stage, per the selected scope.
+
+Windows packaging now resolves the current Desktop (including redirection), and
+extracts into a fresh dated/binary-hash directory under `Orbit IDE`. Five unit
+checks verify ready-to-run extraction, preservation of an existing release and
+project, traversal/absolute/backslash rejection and Windows case collisions.
+The new release never overwrites an existing user's project or settings.
+`--no-desktop` is available for CI and verification-only packaging.
+
+This refactor adds no new third-party dependencies. The backend/notice hash gate
+and existing 105-icon license gate passed. Prior visual-verification limitations
+remain recorded above; no new live screenshot or remote-production claim is made.
