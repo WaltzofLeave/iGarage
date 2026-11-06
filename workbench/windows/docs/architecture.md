@@ -12,6 +12,10 @@ Language sessions keep a bounded UTF-8 mirror for protocol position conversion.
 | `src/editor/document.h` | Document ownership, appearance signature, and revision-keyed outline cache. |
 | `src/editor/outline.*` | Pure lexical outline and completion-word analysis for Python, JavaScript, and Markdown. |
 | `src/editor/commands.*` | Editor-only line/selection operations, grouped for undo. |
+| `src/editor/vim.*` | Modal state, direct Scintilla access, shared immutable registers and grouped edit transactions. |
+| `src/editor/vim_motion.cpp` | Bounded, UTF-8-safe motion and text-object ranges; no full-document copy. |
+| `src/editor/vim_commands.cpp` | Counts/operators, command grammar, search, bounded macro and dot replay. |
+| `src/editor/workbench_vim.cpp` | Focus-guarded Windows keyboard/UTF-16 input and deferred workbench commands. |
 | `src/editor/text_format.h` | Newline detection without rewriting existing content. |
 | `src/ui/quick_pick.*` | Reusable native filtered list. Owns its popup, input font, brush, and rendering resources. |
 | `src/ui/icons.*` | Typed asset registry, file/symbol mappings, licensed SVG loading, bounded shared GPU bitmap cache and Scintilla fold images. |

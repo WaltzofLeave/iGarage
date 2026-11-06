@@ -173,3 +173,36 @@ The new release never overwrites an existing user's project or settings.
 This refactor adds no new third-party dependencies. The backend/notice hash gate
 and existing 105-icon license gate passed. Prior visual-verification limitations
 remain recorded above; no new live screenshot or remote-production claim is made.
+
+## 2026-11-07: native Vim editing subset
+
+The fresh portable extraction passed all 290 native checks: the existing 189
+plus 101 Vim checks. Five packaging unit checks and the 105-icon license/hash
+gate also passed. A fresh source export rebuilt Scintilla, Lexilla and the app
+with the full default script, with zero compiler warnings; its 32 baseline,
+71 language and 101 Vim checks passed. See `qa/vim-tests.json` and
+`qa/vim-delivery-check.json`.
+
+Vim uses direct Scintilla calls, the existing native document and undo stack;
+there is no Vim/gVim/Neovim process, embedded editor window, plugin runtime or
+new dependency. Immutable register aliases share their stored bytes. Tests cover
+UTF-8/CJK/supplementary characters, CRLF units, multiplied counts, inclusive and
+exclusive operator ranges, text objects, line/character registers, macro replay,
+dot replay, undo grouping, focus guards, persisted settings and resource limits.
+The portable archive was checked for absence of an external Vim runtime.
+
+The 10 MiB motion benchmark executes 20,000 commands, verifies zero document
+bytes copied by the controller and records synchronous elapsed time in the
+Vim report. This is not a keyboard-to-screen latency measurement. Native search,
+rendering and background analysis are not included in that metric.
+
+The live app's tools-menu entry, toggle, NORMAL status and existing editor layout
+were observed through Computer Use. The status label was then changed from
+centered to left-aligned. The user stopped Computer Use with physical Escape;
+no later UI input or visual recheck was attempted. Settings-popup appearance,
+the final alignment, other DPI/theme combinations and interactive Vim editing
+remain outside this live visual check; native behavior is covered by tests.
+
+The supported subset and explicit compatibility boundaries are listed in
+[Vim mode](docs/vim-mode.md). It does not add terminal, completion or IME support.
+The generic language-service boundary remains unchanged.

@@ -56,7 +56,7 @@ struct Theme{
   unsigned bg=0x1e1f22,panel=0x25262a,top=0x292a2e,hover=0x34353a,line=0x35363b,text=0xc7c8cc,muted=0x7f838d,accent=0xe6ad85,green=0x88bd91,red=0xe58080,blue=0x89b2e1,purple=0xbd9fdf,tabs=0x222327,selected=0x39414b;
   static Theme light(){Theme t;t.bg=0xfaf9f7;t.panel=0xf0efec;t.top=0xe7e6e3;t.hover=0xe1dfdb;t.line=0xd9d7d3;t.text=0x41454c;t.muted=0x8a8b8d;t.accent=0xb87542;t.green=0x4a805c;t.red=0xbd5259;t.blue=0x426b9c;t.purple=0x8860a9;t.tabs=0xeae9e6;t.selected=0xe0e4ea;return t;}
 };
-struct Settings{int font=13,tab=4;bool light=false,wrap=false;std::string stdinText;std::wstring interpreter=L"python";};
+struct Settings{int font=13,tab=4;bool light=false,wrap=false,vim=false;std::string stdinText;std::wstring interpreter=L"python";};
 struct Layout{
  float w=1440,h=900,title=57,menu=34,leftRail=48,rightRail=37,sidebar=238,structure=208,bottom=226,status=27;
  D2D1_RECT_F titleRect{},menuRect{},side{},editor{},tabs{},crumb{},code{},bottomRect{},bottomTabs{},structureRect{},statusRect{};

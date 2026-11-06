@@ -13,6 +13,7 @@ void App::loadSession() {
         settings.tab = config.value("tab", 4);
         if (settings.tab != 2 && settings.tab != 4 && settings.tab != 8) settings.tab = 4;
         settings.wrap = config.value("wrap", false);
+        settings.vim = config.value("vim", false);
         settings.light = config.value("light", false);
         settings.stdinText = config.value("stdin", "");
         settings.interpreter = wide(config.value("interpreter", "python"));
@@ -55,7 +56,7 @@ void App::saveSession() {
             {"structureVisible", structureVisible}, {"bottomVisible", bottomVisible},
             {"recentFiles", navigation.recent()}, {"editorViews", views},
             {"settings", {{"font", settings.font}, {"tab", settings.tab}, {"wrap", settings.wrap},
-                {"light", settings.light}, {"stdin", settings.stdinText}, {"interpreter", utf8(settings.interpreter)}}}};
+                {"light", settings.light}, {"vim", settings.vim}, {"stdin", settings.stdinText}, {"interpreter", utf8(settings.interpreter)}}}};
         atomicWrite(dataDir / L"session.json", session.dump(2));
     } catch (...) {
         message = "设置保存失败，请检查目录写入权限。";
@@ -106,6 +107,7 @@ void App::openFile(const std::string& path, int line) {
     document.pending = true;
     message = "正在打开 " + path + "…";
     suppress = true;
+    vim.leaveDocument();
     sci(SCI_SETDOCPOINTER, 0, 0);
     sci(SCI_SETREADONLY, TRUE);
     suppress = false;
@@ -126,6 +128,7 @@ void App::openFile(const std::string& path, int line) {
 void App::activateDoc(const std::string& path, int line) {
     if (!documents.contains(path)) return;
     auto& document = documents.at(path);
+    vim.leaveDocument();
     suppress = true;
     if (!document.pointer) {
         document.pointer = sci(SCI_CREATEDOCUMENT, 0,
@@ -161,6 +164,7 @@ void App::activateDoc(const std::string& path, int line) {
         restoreEditorView(document.view);
     }
     if (line >= 0) gotoLine(line);
+    configureVim();
     activatingDocument = false;
     historyReplay = false;
     navigation.touchRecent(path);
@@ -178,6 +182,7 @@ void App::closeTab(const std::string& path) {
     const std::size_t index = found - tabs.begin();
     const bool isActive = path == active;
     if (isActive) {
+        vim.leaveDocument();
         rememberEditorView();
         navigation.depart(captureEditorLocation());
         saveActive();
@@ -205,7 +210,7 @@ void App::changed(SCNotification*n){
  }
  if(n->nmhdr.code==SCN_UPDATEUI){RECT status{0,px(layout.statusRect.top),px(layout.w),px(layout.h)};InvalidateRect(window,&status,FALSE);RECT bar{px(layout.code.right-10),px(layout.code.top),px(layout.code.right),px(layout.code.bottom)};InvalidateRect(window,&bar,FALSE);RECT hbar{px(layout.code.left),px(layout.code.bottom-8),px(layout.code.right),px(layout.code.bottom)};InvalidateRect(window,&hbar,FALSE);auto pos=sci(SCI_GETCURRENTPOS);auto c=sci(SCI_GETCHARAT,pos-1);if(c=='('||c==')'||c=='['||c==']'||c=='{'||c=='}'){auto match=sci(SCI_BRACEMATCH,pos-1,0);if(match>=0)sci(SCI_BRACEHIGHLIGHT,pos-1,match);else sci(SCI_BRACEBADLIGHT,pos-1);}else sci(SCI_BRACEHIGHLIGHT,(uptr_t)-1,-1);}
  if(n->nmhdr.code==SCN_MARGINCLICK){sci(SCI_TOGGLEFOLD,sci(SCI_LINEFROMPOSITION,n->position));invalidate();}
- if(n->nmhdr.code==SCN_CHARADDED){
+ if(n->nmhdr.code==SCN_CHARADDED&&!settings.vim){
   auto pos=sci(SCI_GETCURRENTPOS);int ch=n->ch;auto line=sci(SCI_LINEFROMPOSITION,pos);
   if(ch=='\n'&&line>0){auto indent=sci(SCI_GETLINEINDENTATION,line-1);auto end=sci(SCI_GETLINEENDPOSITION,line-1);auto start=sci(SCI_POSITIONFROMLINE,line-1);while(end>start&&(sci(SCI_GETCHARAT,end-1)==' '||sci(SCI_GETCHARAT,end-1)=='\r'))end--;if(extension(active)=="py"&&sci(SCI_GETCHARAT,end-1)==':')indent+=settings.tab;sci(SCI_SETLINEINDENTATION,line,indent);sci(SCI_GOTOPOS,sci(SCI_GETLINEINDENTPOSITION,line));}
   char closingChar=ch=='('?')':ch=='['?']':ch=='{'?'}':ch=='\"'?'\"':ch=='\''?'\'':0;
@@ -219,7 +224,7 @@ void App::saveAll(){saveActive();for(auto&[p,d]:documents){if(p==active||!d.load
 void App::fileEvent(FileEvent*event){std::unique_ptr<FileEvent>e(event);if(!e->error.empty()){if(documents.contains(e->path))documents[e->path].pending=false;toast(e->error);return;}if(e->path=="@scan"){
  if(e->revision!=(uint64_t)scanGeneration)return;
  closeLanguageHints();for(const auto&path:tabs)language.close(path);
- auto data=json::parse(e->text);auto newRoot=fs::u8path(data["root"].get<std::string>());bool restore=data.value("restore",false);suppress=true;sci(SCI_SETDOCPOINTER,0,0);for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);documents.clear();suppress=false;const bool sameProject=lower(utf8(root.wstring()))==lower(utf8(newRoot.wstring()));if(!restore||!sameProject){navigation.clear();restoredViews.clear();}else navigation.resetHistory();pendingNavigation.reset();historyReplay=false;root=newRoot;projectIndexDirty=true;startLanguage();for(auto&item:data["paths"]){std::string p=item.get<std::string>();Document d;d.path=p;if(restoredViews.contains(p))d.view=restoredViews.at(p);documents.emplace(p,std::move(d));}restoredViews.clear();if(!restore){tabs={};active.clear();}tabs.erase(std::remove_if(tabs.begin(),tabs.end(),[this](auto&p){return !documents.contains(p);}),tabs.end());if(tabs.empty()){for(auto p:{"src/main.py","src/utils.py","README.md"})if(documents.contains(p))tabs.push_back(p);}if(!documents.contains(active))active=tabs.empty()?documents.empty()?"":documents.begin()->first:tabs.front();expanded={"","src","tests"};treeScroll=0;searchHits.clear();SetWindowTextW(searchEdit,L"");rebuildTree();listCheckpoints();if(!active.empty())openFile(active);else{symbols.clear();positionControls();}message="项目已载入 · "+std::to_string(documents.size())+" 个文件";saveSession();invalidate();return;}
+ auto data=json::parse(e->text);auto newRoot=fs::u8path(data["root"].get<std::string>());bool restore=data.value("restore",false);vim.leaveDocument();suppress=true;sci(SCI_SETDOCPOINTER,0,0);for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);documents.clear();suppress=false;const bool sameProject=lower(utf8(root.wstring()))==lower(utf8(newRoot.wstring()));if(!restore||!sameProject){navigation.clear();restoredViews.clear();}else navigation.resetHistory();pendingNavigation.reset();historyReplay=false;root=newRoot;projectIndexDirty=true;startLanguage();for(auto&item:data["paths"]){std::string p=item.get<std::string>();Document d;d.path=p;if(restoredViews.contains(p))d.view=restoredViews.at(p);documents.emplace(p,std::move(d));}restoredViews.clear();if(!restore){tabs={};active.clear();}tabs.erase(std::remove_if(tabs.begin(),tabs.end(),[this](auto&p){return !documents.contains(p);}),tabs.end());if(tabs.empty()){for(auto p:{"src/main.py","src/utils.py","README.md"})if(documents.contains(p))tabs.push_back(p);}if(!documents.contains(active))active=tabs.empty()?documents.empty()?"":documents.begin()->first:tabs.front();expanded={"","src","tests"};treeScroll=0;searchHits.clear();SetWindowTextW(searchEdit,L"");rebuildTree();listCheckpoints();if(!active.empty())openFile(active);else{symbols.clear();positionControls();}message="项目已载入 · "+std::to_string(documents.size())+" 个文件";saveSession();invalidate();return;}
  if(e->path=="@checkpoint-list"){
     if(e->revision!=static_cast<std::uint64_t>(checkpointGeneration))return;
     const auto items=json::parse(e->text);

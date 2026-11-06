@@ -74,7 +74,7 @@ void App::languageChanged(SCNotification* event) {
         updateDiagnosticIndicators();
         if (signatureVisible) SetTimer(window, 8, 80, nullptr);
     }
-    if (event->nmhdr.code == SCN_CHARADDED) {
+    if (event->nmhdr.code == SCN_CHARADDED && !settings.vim) {
         if (event->ch == '.' || event->ch == '\'' || event->ch == '"') SetTimer(window, 4, 35, nullptr);
         if (event->ch == '(' || event->ch == ',') SetTimer(window, 8, 60, nullptr);
         if (event->ch == ')') SetTimer(window, 8, 60, nullptr);
@@ -87,7 +87,7 @@ void App::languageChanged(SCNotification* event) {
     }
 }
 void App::requestLanguageCompletion(bool explicitRequest) {
-    if (GetFocus() != editor || !pythonFile(active)) return;
+    if (settings.vim || GetFocus() != editor || !pythonFile(active)) return;
     if (sci(SCI_GETLENGTH) > orbit::language::Service::fileLimit) {
         if (explicitRequest) toast("文件超过 2 MiB，语义分析已暂停");
         return;

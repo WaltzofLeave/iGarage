@@ -43,7 +43,7 @@ void App::createControls(){
  searchEdit=CreateWindowExW(0,L"EDIT",L"",WS_CHILD|WS_TABSTOP|ES_AUTOHSCROLL,0,0,100,24,window,(HMENU)103,instance,nullptr);setCue(searchEdit,L"在项目中搜索…");setEditFont(searchEdit,11);
  termEdit=CreateWindowExW(0,L"EDIT",L"",WS_CHILD|WS_TABSTOP|ES_AUTOHSCROLL,0,0,100,24,window,(HMENU)104,instance,nullptr);setEditFont(termEdit,11,true);
  SetWindowSubclass(editor,EditSubclass,1,(DWORD_PTR)this);SetWindowSubclass(searchEdit,EditSubclass,2,(DWORD_PTR)this);SetWindowSubclass(termEdit,EditSubclass,3,(DWORD_PTR)this);
- configureEditor(editor,true);configureEditor(output,false);configureEditor(termOutput,false);terminalAppend("Orbit Shell 1.0 · 输入 help 查看工作区命令。\n");
+ configureEditor(editor,true);configureVim();configureEditor(output,false);configureEditor(termOutput,false);terminalAppend("Orbit Shell 1.0 · 输入 help 查看工作区命令。\n");
  tooltip=CreateWindowExW(WS_EX_TOPMOST,TOOLTIPS_CLASSW,nullptr,WS_POPUP|TTS_ALWAYSTIP|TTS_NOPREFIX,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,window,nullptr,instance,nullptr);TOOLINFOW ti{sizeof(ti)};ti.uFlags=TTF_SUBCLASS|TTF_IDISHWND;ti.hwnd=window;ti.uId=(UINT_PTR)window;ti.lpszText=LPSTR_TEXTCALLBACKW;SendMessageW(tooltip,TTM_ADDTOOLW,0,(LPARAM)&ti);SendMessageW(tooltip,TTM_SETDELAYTIME,TTDT_INITIAL,550);SendMessageW(tooltip,TTM_SETMAXTIPWIDTH,0,350);
  scanProject(root,true);updateLayout();
  appendOutput("工作区已准备就绪。\n在这里，把你的想法变成代码。\n\n点击 ▶ 运行，或按 Shift + F10。\nPython 将使用本地解释器运行。\n");
@@ -56,7 +56,7 @@ void App::configureEditor(HWND h,bool code){
  S(SCI_SETEXTRAASCENT,0);S(SCI_SETEXTRADESCENT,0);
  // Keep the code font size while reducing interline padding; output spacing stays independent.
  int lineHeight=(int)S(SCI_TEXTHEIGHT,0),desired=px((code?settings.font:11)+(code?7:9));
- S(SCI_SETEXTRAASCENT,px(2));S(SCI_SETEXTRADESCENT,std::max(0,desired-lineHeight-px(2)));S(SCI_SETWRAPMODE,code?(settings.wrap?SC_WRAP_WORD:SC_WRAP_NONE):SC_WRAP_WORD);S(SCI_SETTABWIDTH,settings.tab);S(SCI_SETINDENT,settings.tab);S(SCI_SETUSETABS,FALSE);S(SCI_SETINDENTATIONGUIDES,SC_IV_NONE);S(SCI_SETBACKSPACEUNINDENTS,TRUE);S(SCI_SETTABINDENTS,TRUE);S(SCI_SETMULTIPLESELECTION,TRUE);S(SCI_SETADDITIONALSELECTIONTYPING,TRUE);S(SCI_SETADDITIONALCARETSBLINK,FALSE);S(SCI_SETPHASESDRAW,SC_PHASES_MULTIPLE);S(SCI_SETLAYOUTCACHE,SC_CACHE_PAGE);S(SCI_SETIMEINTERACTION,SC_IME_INLINE);S(SCI_SETMOUSEDWELLTIME,500);S(SCI_SETACCESSIBILITY,SC_ACCESSIBILITY_ENABLED);S(SCI_SETREADONLY,!code);
+ S(SCI_SETEXTRAASCENT,px(2));S(SCI_SETEXTRADESCENT,std::max(0,desired-lineHeight-px(2)));S(SCI_SETWRAPMODE,code?(settings.wrap?SC_WRAP_WORD:SC_WRAP_NONE):SC_WRAP_WORD);S(SCI_SETTABWIDTH,settings.tab);S(SCI_SETINDENT,settings.tab);S(SCI_SETUSETABS,FALSE);S(SCI_SETINDENTATIONGUIDES,SC_IV_NONE);S(SCI_SETBACKSPACEUNINDENTS,TRUE);S(SCI_SETTABINDENTS,TRUE);S(SCI_SETMULTIPLESELECTION,TRUE);S(SCI_SETADDITIONALSELECTIONTYPING,TRUE);S(SCI_SETADDITIONALCARETSBLINK,FALSE);S(SCI_SETPHASESDRAW,SC_PHASES_MULTIPLE);S(SCI_SETLAYOUTCACHE,SC_CACHE_PAGE);S(SCI_SETIMEINTERACTION,SC_IME_INLINE);S(SCI_SETMOUSEDWELLTIME,500);S(SCI_SETACCESSIBILITY,SC_ACCESSIBILITY_ENABLED);S(SCI_SETREADONLY,!code);if(code&&vimAttached)vim.refreshCaret();
  if(code){S(SCI_AUTOCSETIGNORECASE,TRUE);S(SCI_AUTOCSETMAXHEIGHT,10);S(SCI_AUTOCSETMAXWIDTH,55);S(SCI_AUTOCSETCHOOSESINGLE,FALSE);S(SCI_AUTOCSETDROPRESTOFWORD,TRUE);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST,rgb(theme.text)|0xff000000u);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST_BACK,rgb(theme.panel)|0xff000000u);S(SCI_SETELEMENTCOLOUR,SC_ELEMENT_LIST_SELECTED_BACK,rgb(theme.selected)|0xff000000u);S(SCI_SETMODEVENTMASK,SC_MOD_INSERTTEXT|SC_MOD_DELETETEXT);}
 }
 void App::styleEditor(){
@@ -92,7 +92,7 @@ void App::positionControls(){
 void App::invalidate(){if(window)InvalidateRect(window,nullptr,FALSE);}
 void App::toast(std::string s){message=s;toastText=std::move(s);toastUntil=Clock::now()+std::chrono::seconds(4);SetTimer(window,3,4000,nullptr);invalidate();}
 std::wstring App::editText(HWND h){int n=GetWindowTextLengthW(h);std::wstring s(n+1,0);GetWindowTextW(h,s.data(),n+1);s.resize(n);return s;}
-void App::applySettings(){theme=settings.light?Theme::light():Theme{};startLanguage();styleEditor();updateDiagnosticIndicators();configureEditor(output,false);configureEditor(termOutput,false);DWORD border=rgb(theme.top);DwmSetWindowAttribute(window,DWMWA_BORDER_COLOR,&border,sizeof(border));for(auto h:{searchEdit,termEdit,popupEdit,popupEdit2})if(h)InvalidateRect(h,nullptr,TRUE);saveSession();updateLayout();if(popup)InvalidateRect(popup,nullptr,FALSE);}
+void App::applySettings(){theme=settings.light?Theme::light():Theme{};startLanguage();styleEditor();configureVim();updateDiagnosticIndicators();configureEditor(output,false);configureEditor(termOutput,false);DWORD border=rgb(theme.top);DwmSetWindowAttribute(window,DWMWA_BORDER_COLOR,&border,sizeof(border));for(auto h:{searchEdit,termEdit,popupEdit,popupEdit2})if(h)InvalidateRect(h,nullptr,TRUE);saveSession();updateLayout();if(popup)InvalidateRect(popup,nullptr,FALSE);}
 LRESULT CALLBACK App::WndProc(HWND h,UINT m,WPARAM w,LPARAM l){App*a=(App*)GetWindowLongPtrW(h,GWLP_USERDATA);if(m==WM_NCCREATE){a=(App*)((CREATESTRUCTW*)l)->lpCreateParams;SetWindowLongPtrW(h,GWLP_USERDATA,(LONG_PTR)a);a->window=h;}return a?a->proc(h,m,w,l):DefWindowProcW(h,m,w,l);}
 LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  switch(m){
@@ -125,7 +125,7 @@ LRESULT App::proc(HWND h,UINT m,WPARAM w,LPARAM l){
  case WM_DROPFILES:{auto drop=(HDROP)w;UINT n=DragQueryFileW(drop,0xffffffff,nullptr,0);for(UINT i=0;i<n;i++){wchar_t p[32768];DragQueryFileW(drop,i,p,32768);if(fs::is_directory(p))scanProject(p);else importFile(p);}DragFinish(drop);return 0;}
  case WM_KEYDOWN:if(key((UINT)w,(GetKeyState(VK_CONTROL)&0x8000)!=0,(GetKeyState(VK_SHIFT)&0x8000)!=0,(GetKeyState(VK_MENU)&0x8000)!=0))return 0;break;
  case WM_CLOSE:finishClose();return 0;
- case WM_DESTROY:closeLanguageHints();language.stop();KillTimer(h,7);KillTimer(h,8);KillTimer(h,9);quickPick.close();alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);KillTimer(h,6);outputBuffer.cancel();if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
+ case WM_DESTROY:vim.leaveDocument();closeLanguageHints();language.stop();KillTimer(h,7);KillTimer(h,8);KillTimer(h,9);quickPick.close();alive=false;searchCancel++;KillTimer(h,1);KillTimer(h,2);KillTimer(h,6);outputBuffer.cancel();if(running)stopRun();if(runThread.joinable())runThread.join();io.drain();searchWorker.drain();for(auto&[p,d]:documents)if(d.pointer)sci(SCI_RELEASEDOCUMENT,0,d.pointer);PostQuitMessage(0);return 0;
  }
  return DefWindowProcW(h,m,w,l);
 }
@@ -134,13 +134,15 @@ LRESULT CALLBACK App::EditSubclass(HWND h,UINT m,WPARAM w,LPARAM l,UINT_PTR id,D
  if(id==2&&w==VK_RETURN){if(!a->searchHits.empty())a->openFile(a->searchHits[0].path,a->searchHits[0].line);return 0;}
  if(!a->popup&&a->key((UINT)w,ctrl,shift,alt))return 0;
  }
+ if(id==1&&(m==WM_LBUTTONDOWN||m==WM_RBUTTONDOWN||m==WM_KILLFOCUS)){a->vim.pointerInput();a->vimSurrogate=0;}
  if(m==WM_KILLFOCUS&&id==1)a->closeLanguageHints();
+ if(m==WM_CHAR&&id==1&&a->vimCharacter(static_cast<wchar_t>(w)))return 0;
  if(m==WM_CHAR&&id==1&&(w==')'||w==']'||w=='}'||w=='\"'||w=='\'')){auto pos=a->sci(SCI_GETCURRENTPOS);if(a->sci(SCI_GETCHARAT,pos)==(int)w){a->sci(SCI_CHARRIGHT);return 0;}}
  if(m==WM_NCDESTROY)RemoveWindowSubclass(h,EditSubclass,id);return DefSubclassProc(h,m,w,l);}
 int WINAPI wWinMain(HINSTANCE h,HINSTANCE,LPWSTR command,int show){
  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);App app;
  if(!app.init(h)){MessageBoxW(nullptr,L"无法初始化 Direct2D / Scintilla / SVG 图标。请检查系统版本和安装文件。",L"Orbit IDE",MB_ICONERROR);return 1;}
- std::wstring cmd=command;if(cmd.find(L"--language-test")!=cmd.npos){int code=app.languageTest(app.exeDir/L"language-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--icon-test")!=cmd.npos){int code=app.iconTest(app.exeDir/L"icon-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--performance-test")!=cmd.npos){int code=app.performanceTest(app.exeDir/L"performance-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--workbench-test")!=cmd.npos){int code=app.workbenchTest(app.exeDir/L"workbench-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
+ std::wstring cmd=command;if(cmd.find(L"--vim-test")!=cmd.npos){int code=app.vimTest(app.exeDir/L"vim-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--language-test")!=cmd.npos){int code=app.languageTest(app.exeDir/L"language-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--icon-test")!=cmd.npos){int code=app.iconTest(app.exeDir/L"icon-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--performance-test")!=cmd.npos){int code=app.performanceTest(app.exeDir/L"performance-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--workbench-test")!=cmd.npos){int code=app.workbenchTest(app.exeDir/L"workbench-tests.json");DestroyWindow(app.window);CoUninitialize();return code;}if(cmd.find(L"--self-test")!=cmd.npos){int code=app.selfTest(app.exeDir/L"native-self-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
  if(cmd.find(L"--benchmark")!=cmd.npos){app.benchmark(app.exeDir/L"native-benchmark.json");DestroyWindow(app.window);CoUninitialize();return 0;}
  if(cmd.find(L"--integration-test")!=cmd.npos){int code=app.integrationTest(app.exeDir/L"native-integration-test.json");DestroyWindow(app.window);CoUninitialize();return code;}
  ShowWindow(app.window,show);ShowWindow(app.window,SW_SHOW);UpdateWindow(app.window);MSG msg;while(GetMessageW(&msg,nullptr,0,0)>0){if(msg.message==WM_KEYDOWN||msg.message==WM_SYSKEYDOWN){bool ctrl=GetKeyState(VK_CONTROL)&0x8000,shift=GetKeyState(VK_SHIFT)&0x8000,alt=GetKeyState(VK_MENU)&0x8000;if(!app.hasTransientPopup()&&app.key((UINT)msg.wParam,ctrl,shift,alt))continue;}TranslateMessage(&msg);DispatchMessageW(&msg);}for(auto f:app.ownedFonts)DeleteObject(f);CoUninitialize();return (int)msg.wParam;

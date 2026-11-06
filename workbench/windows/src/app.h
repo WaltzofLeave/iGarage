@@ -6,6 +6,7 @@
 #include "workspace/project_tree.h"
 #include "language/service.h"
 #include "ui/completion_popup.h"
+#include "editor/vim.h"
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shobjidl.h>
@@ -20,9 +21,17 @@ public:
  int performanceTest(const fs::path& report);
  int iconTest(const fs::path& report);
  int languageTest(const fs::path& report);
+ int vimTest(const fs::path& report);
  bool hasTransientPopup() const { return popup || quickPick.isOpen(); }
 
 private:
+ orbit::VimEditor vim;
+ bool vimAttached = false;
+ wchar_t vimSurrogate = 0;
+ bool vimKey(UINT key, bool ctrl, bool shift, bool alt);
+ bool vimCharacter(wchar_t unit);
+ void configureVim();
+ void finishVimInput();
  // The host owns these subsystems; UI code dispatches actions instead of mutating them.
  orbit::NavigationHistory navigation;
  orbit::QuickPick quickPick;

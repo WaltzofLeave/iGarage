@@ -13,6 +13,8 @@
 
 首次启动会把 `sample-project/` 复制为程序旁的 `orbit-python/`。项目编辑自动写回磁盘，设置保存在 `data/session.json`。可通过「文件 → 打开项目文件夹」切换项目。
 
+原生 Vim 模式可在「工具 → Vim 模式」开启。支持常用模式编辑、操作符／文本对象、寄存器、宏和重复；不嵌入或启动其他编辑器。完整支持范围与边界见 [Vim 模式说明](docs/vim-mode.md)。
+
 ## 与 Orbit 的功能对应
 
 | Orbit 功能 | Windows 原生实现 |
@@ -64,6 +66,7 @@ build.cmd
 app\OrbitNative.exe --self-test
 app\OrbitNative.exe --integration-test
 app\OrbitNative.exe --language-test
+app\OrbitNative.exe --vim-test
 app\OrbitNative.exe --benchmark
 ```
 

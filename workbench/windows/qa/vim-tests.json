@@ -1,0 +1,414 @@
+{
+  "checks": 101,
+  "passed": true,
+  "results": [
+    {
+      "name": "counts_and_hjkl_motions",
+      "passed": true
+    },
+    {
+      "name": "G_reaches_last_line",
+      "passed": true
+    },
+    {
+      "name": "count_gg_reaches_line",
+      "passed": true
+    },
+    {
+      "name": "normal_caret_stays_on_last_character",
+      "passed": true
+    },
+    {
+      "name": "l_does_not_cross_eol",
+      "passed": true
+    },
+    {
+      "name": "word_forward",
+      "passed": true
+    },
+    {
+      "name": "word_end",
+      "passed": true
+    },
+    {
+      "name": "word_back",
+      "passed": true
+    },
+    {
+      "name": "WORD_skips_whitespace",
+      "passed": true
+    },
+    {
+      "name": "delete_word",
+      "passed": true
+    },
+    {
+      "name": "delete_word_one_undo",
+      "passed": true
+    },
+    {
+      "name": "ctrl_r_redo",
+      "passed": true
+    },
+    {
+      "name": "operator_counts_multiply",
+      "passed": true
+    },
+    {
+      "name": "cw_keeps_following_space",
+      "passed": true
+    },
+    {
+      "name": "change_and_insert_one_undo",
+      "passed": true
+    },
+    {
+      "name": "dot_repeats_change_and_insert",
+      "passed": true
+    },
+    {
+      "name": "dot_count_replaces_original_count",
+      "passed": true
+    },
+    {
+      "name": "counted_insert",
+      "passed": true
+    },
+    {
+      "name": "counted_insert_single_undo",
+      "passed": true
+    },
+    {
+      "name": "dot_replays_counted_insert",
+      "passed": true
+    },
+    {
+      "name": "counted_line_delete",
+      "passed": true
+    },
+    {
+      "name": "line_register_paste_before",
+      "passed": true
+    },
+    {
+      "name": "delete_final_unterminated_line",
+      "passed": true
+    },
+    {
+      "name": "paste_unterminated_line_adds_separator",
+      "passed": true
+    },
+    {
+      "name": "delete_empty_last_line_removes_whole_eol",
+      "passed": true
+    },
+    {
+      "name": "line_change_preserves_following_line",
+      "passed": true
+    },
+    {
+      "name": "line_change_one_undo",
+      "passed": true
+    },
+    {
+      "name": "line_change_retains_autoindent",
+      "passed": true
+    },
+    {
+      "name": "named_character_register",
+      "passed": true
+    },
+    {
+      "name": "black_hole_preserves_unnamed_register",
+      "passed": true
+    },
+    {
+      "name": "uppercase_register_appends",
+      "passed": true
+    },
+    {
+      "name": "inner_word_object",
+      "passed": true
+    },
+    {
+      "name": "around_word_object",
+      "passed": true
+    },
+    {
+      "name": "around_word_on_whitespace_includes_next_word",
+      "passed": true
+    },
+    {
+      "name": "nested_parenthesis_object",
+      "passed": true
+    },
+    {
+      "name": "quoted_object_handles_escaped_quote",
+      "passed": true
+    },
+    {
+      "name": "around_bracket_object",
+      "passed": true
+    },
+    {
+      "name": "visual_character_inclusive_delete",
+      "passed": true
+    },
+    {
+      "name": "visual_delete_one_undo",
+      "passed": true
+    },
+    {
+      "name": "visual_line_yank",
+      "passed": true
+    },
+    {
+      "name": "visual_text_object_yank_no_edit",
+      "passed": true
+    },
+    {
+      "name": "visual_escape_retains_actual_caret",
+      "passed": true
+    },
+    {
+      "name": "find_character",
+      "passed": true
+    },
+    {
+      "name": "repeat_character_find",
+      "passed": true
+    },
+    {
+      "name": "reverse_character_find",
+      "passed": true
+    },
+    {
+      "name": "operator_till_character",
+      "passed": true
+    },
+    {
+      "name": "backward_find_operator_includes_cursor",
+      "passed": true
+    },
+    {
+      "name": "backward_till_operator_excludes_found_character",
+      "passed": true
+    },
+    {
+      "name": "repeat_till_skips_adjacent_previous_match",
+      "passed": true
+    },
+    {
+      "name": "delete_to_end_of_empty_line_preserves_eol",
+      "passed": true
+    },
+    {
+      "name": "matching_brace_motion",
+      "passed": true
+    },
+    {
+      "name": "matching_brace_operator_inclusive",
+      "passed": true
+    },
+    {
+      "name": "unicode_replace_character",
+      "passed": true
+    },
+    {
+      "name": "replace_count_cannot_extend_line",
+      "passed": true
+    },
+    {
+      "name": "utf8_motion_delete_codepoint",
+      "passed": true
+    },
+    {
+      "name": "normal_caret_avoids_crlf_bytes",
+      "passed": true
+    },
+    {
+      "name": "line_yank_paste_preserves_crlf",
+      "passed": true
+    },
+    {
+      "name": "insert_backspace_treats_crlf_as_unit",
+      "passed": true
+    },
+    {
+      "name": "insert_unicode_and_supplementary_codepoint",
+      "passed": true
+    },
+    {
+      "name": "mouse_or_focus_boundary_splits_insert_undo",
+      "passed": true
+    },
+    {
+      "name": "earlier_insert_segment_keeps_undo",
+      "passed": true
+    },
+    {
+      "name": "open_line_preserves_eol_and_indent",
+      "passed": true
+    },
+    {
+      "name": "insert_tab_and_autoindent",
+      "passed": true
+    },
+    {
+      "name": "record_and_counted_macro_playback",
+      "passed": true
+    },
+    {
+      "name": "repeat_last_macro",
+      "passed": true
+    },
+    {
+      "name": "macro_changes_use_native_undo",
+      "passed": true
+    },
+    {
+      "name": "literal_search",
+      "passed": true
+    },
+    {
+      "name": "search_next",
+      "passed": true
+    },
+    {
+      "name": "search_wraps",
+      "passed": true
+    },
+    {
+      "name": "search_reverse",
+      "passed": true
+    },
+    {
+      "name": "word_search_respects_boundaries",
+      "passed": true
+    },
+    {
+      "name": "ex_line_number",
+      "passed": true
+    },
+    {
+      "name": "ex_save_dispatches_to_host",
+      "passed": true
+    },
+    {
+      "name": "ex_write_all_dispatch",
+      "passed": true
+    },
+    {
+      "name": "ex_save_close_dispatch",
+      "passed": true
+    },
+    {
+      "name": "unsupported_ex_never_starts_shell",
+      "passed": true
+    },
+    {
+      "name": "indent_line_operators",
+      "passed": true
+    },
+    {
+      "name": "unindent_line_operator",
+      "passed": true
+    },
+    {
+      "name": "join_lines",
+      "passed": true
+    },
+    {
+      "name": "join_is_one_undo",
+      "passed": true
+    },
+    {
+      "name": "escape_cancels_pending_operator",
+      "passed": true
+    },
+    {
+      "name": "document_switch_finishes_insert_and_resets_mode",
+      "passed": true
+    },
+    {
+      "name": "document_switch_does_not_leave_open_undo_group",
+      "passed": true
+    },
+    {
+      "name": "readonly_document_is_not_modified",
+      "passed": true
+    },
+    {
+      "name": "disabled_controller_does_nothing",
+      "passed": true
+    },
+    {
+      "name": "normal_mode_uses_native_block_caret",
+      "passed": true
+    },
+    {
+      "name": "insert_mode_uses_line_caret",
+      "passed": true
+    },
+    {
+      "name": "large_file_motions_copy_zero_document_bytes",
+      "passed": true
+    },
+    {
+      "name": "oversized_register_delete_is_rejected_without_data_loss",
+      "passed": true
+    },
+    {
+      "name": "black_hole_allows_large_delete_without_copy",
+      "passed": true
+    },
+    {
+      "name": "pathological_word_scan_is_bounded",
+      "passed": true
+    },
+    {
+      "name": "recursive_macros_have_depth_limit",
+      "passed": true
+    },
+    {
+      "name": "wm_char_adapter_combines_utf16_surrogates",
+      "passed": true
+    },
+    {
+      "name": "stale_editor_char_is_ignored_after_focus_change",
+      "passed": true
+    },
+    {
+      "name": "vim_shortcuts_ignore_non_editor_focus",
+      "passed": true
+    },
+    {
+      "name": "ctrl_f_is_vim_page_motion",
+      "passed": true
+    },
+    {
+      "name": "ctrl_shift_f_preserves_project_search",
+      "passed": true
+    },
+    {
+      "name": "ctrl_s_preserves_workbench_save",
+      "passed": true
+    },
+    {
+      "name": "focus_loss_cancels_pending_operator",
+      "passed": true
+    },
+    {
+      "name": "vim_setting_persists",
+      "passed": true
+    },
+    {
+      "name": "vim_setting_reloads",
+      "passed": true
+    }
+  ],
+  "scope": "Real isolated Scintilla editing and command dispatch. Timing is synchronous controller work, not input-to-screen latency.",
+  "timings": {
+    "20000_motions_10MiB_ms": 366.0633
+  }
+}

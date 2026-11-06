@@ -9,7 +9,7 @@
     "rasterizations": 346,
     "rendered_variants": 330,
     "source_loads": 106,
-    "warm_10000_lookup_ms": 0.1376,
+    "warm_10000_lookup_ms": 0.1316,
     "warm_lookup_scope": "CPU cache access only; not GPU draw or input-to-screen timing."
   },
   "passed": true,

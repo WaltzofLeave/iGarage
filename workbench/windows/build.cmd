@@ -36,10 +36,12 @@ pushd src
 rc /nologo /fo..\build\orbit.res orbit.rc
 if errorlevel 1 exit /b 1
 popd
-cl /nologo /MP /D_SILENCE_CXX20_U8PATH_DEPRECATION_WARNING /std:c++20 /utf-8 /EHsc /O2 /GL /MT /DNDEBUG /DUNICODE /D_UNICODE /W4 /wd4100 /wd4244 /wd4267 src\main.cpp src\paint.cpp src\view.cpp src\workspace.cpp src\interaction.cpp src\runtime.cpp src\integration.cpp src\navigation\history.cpp src\navigation\workbench_navigation.cpp src\editor\outline.cpp src\editor\commands.cpp src\ui\quick_pick.cpp src\ui\icons.cpp src\ui\completion_popup.cpp src\language\protocol.cpp src\language\workspace_uri.cpp src\language\backend.cpp src\language\client.cpp src\language\service.cpp src\language\workbench_language.cpp src\tests\icon_tests.cpp src\tests\language_tests.cpp src\tests\language_contract_tests.cpp src\tests\workbench_tests.cpp src\runtime\output_buffer.cpp src\runtime\console_view.cpp src\workspace\project_tree.cpp src\tests\performance_tests.cpp /Fo"build\\" /Fe"app\OrbitNative.exe" /link /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:WINDOWS /DYNAMICBASE /NXCOMPAT /CETCOMPAT /MANIFEST:NO build\orbit.res vendor\scintilla\bin\libscintilla.lib vendor\lexilla\bin\liblexilla.lib user32.lib gdi32.lib
+cl /nologo /MP /D_SILENCE_CXX20_U8PATH_DEPRECATION_WARNING /std:c++20 /utf-8 /EHsc /O2 /GL /MT /DNDEBUG /DUNICODE /D_UNICODE /W4 /wd4100 /wd4244 /wd4267 src\main.cpp src\paint.cpp src\view.cpp src\workspace.cpp src\interaction.cpp src\runtime.cpp src\integration.cpp src\navigation\history.cpp src\navigation\workbench_navigation.cpp src\editor\outline.cpp src\editor\commands.cpp src\editor\vim.cpp src\editor\vim_motion.cpp src\editor\vim_commands.cpp src\editor\workbench_vim.cpp src\tests\vim_tests.cpp src\ui\quick_pick.cpp src\ui\icons.cpp src\ui\completion_popup.cpp src\language\protocol.cpp src\language\workspace_uri.cpp src\language\backend.cpp src\language\client.cpp src\language\service.cpp src\language\workbench_language.cpp src\tests\icon_tests.cpp src\tests\language_tests.cpp src\tests\language_contract_tests.cpp src\tests\workbench_tests.cpp src\runtime\output_buffer.cpp src\runtime\console_view.cpp src\workspace\project_tree.cpp src\tests\performance_tests.cpp /Fo"build\\" /Fe"app\OrbitNative.exe" /link /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:WINDOWS /DYNAMICBASE /NXCOMPAT /CETCOMPAT /MANIFEST:NO build\orbit.res vendor\scintilla\bin\libscintilla.lib vendor\lexilla\bin\liblexilla.lib user32.lib gdi32.lib
 if errorlevel 1 exit /b 1
-xcopy assets app\assets\ /E /I /Y >nul
-xcopy sample-project app\sample-project\ /E /I /Y >nul
+xcopy assets app\assets\ /D /E /I /Y >nul
+if errorlevel 2 exit /b 1
+xcopy sample-project app\sample-project\ /D /E /I /Y >nul
+if errorlevel 2 exit /b 1
 copy /Y vendor\scintilla\License.txt app\Scintilla-LICENSE.txt >nul
 copy /Y vendor\lexilla\License.txt app\Lexilla-LICENSE.txt >nul
 copy /Y vendor\json-LICENSE.txt app\json-LICENSE.txt >nul

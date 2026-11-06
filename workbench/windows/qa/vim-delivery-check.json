@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-07",
+  "passed": true,
+  "portable_native_checks": 290,
+  "portable": [
+    {
+      "mode": "--self-test",
+      "checks": 32,
+      "passed": true
+    },
+    {
+      "mode": "--workbench-test",
+      "checks": 37,
+      "passed": true
+    },
+    {
+      "mode": "--integration-test",
+      "checks": 18,
+      "passed": true
+    },
+    {
+      "mode": "--performance-test",
+      "checks": 21,
+      "passed": true
+    },
+    {
+      "mode": "--icon-test",
+      "checks": 10,
+      "passed": true
+    },
+    {
+      "mode": "--language-test",
+      "checks": 71,
+      "passed": true
+    },
+    {
+      "mode": "--vim-test",
+      "checks": 101,
+      "passed": true
+    }
+  ],
+  "clean_source": [
+    {
+      "mode": "--self-test",
+      "checks": 32,
+      "passed": true
+    },
+    {
+      "mode": "--language-test",
+      "checks": 71,
+      "passed": true
+    },
+    {
+      "mode": "--vim-test",
+      "checks": 101,
+      "passed": true
+    }
+  ],
+  "clean_source_build": "full default build; zero compiler warnings",
+  "package_unit_checks": 5,
+  "no_external_vim_runtime": true,
+  "binary_sha256": "2a883802f57f85ad931d0e53f5894b8ba44dfefea97f3f218b3ef7df2d7dd0f3",
+  "visual": {
+    "observed": [
+      "new tools-menu entry",
+      "Vim toggle and NORMAL status",
+      "existing editor layout"
+    ],
+    "followup": "Status alignment was corrected in code after observation; user stopped Computer Use with physical Escape. No later UI input or visual recheck."
+  }
+}
