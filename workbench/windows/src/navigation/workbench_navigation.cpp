@@ -81,13 +81,14 @@ void App::releaseClosedDocument(const std::string& path) {
 }
 
 void App::showRecentFiles() {
+    closeLanguageHints();
     closePopup();
     closeMenu();
     std::vector<orbit::QuickPickItem> rows;
     for (const auto& path : navigation.recent()) {
         if (documents.contains(path)) {
-            const auto language = extension(path);
-            const char kind = language == "py" ? 'P' : language == "md" ? 'M' : language == "js" ? 'J' : 'F';
+            const auto fileType = extension(path);
+            const char kind = fileType == "py" ? 'P' : fileType == "md" ? 'M' : fileType == "js" ? 'J' : 'F';
             rows.push_back({path, wide(baseName(path)), wide(path), -1, kind});
         }
     }
@@ -99,6 +100,7 @@ void App::showRecentFiles() {
 }
 
 void App::showFileOutline() {
+    closeLanguageHints();
     if (active.empty()) return;
     closePopup();
     closeMenu();

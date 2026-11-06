@@ -10,7 +10,7 @@ The Windows application, vendored dependency sources, resources, sample project,
 and verification records are all contained in `workbench/windows`.
 Generated executables, build caches, local projects, and session state are ignored.
 
-From the repository root, on Windows with Visual Studio 2022 C++ tools and a Windows SDK:
+From the repository root, on Windows with Visual Studio 2022 C++ tools, a Windows SDK and Python 3.11+ for build preparation:
 
 ```bat
 workbench\windows\build.cmd

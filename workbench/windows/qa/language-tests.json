@@ -1,0 +1,219 @@
+{
+  "checks": 47,
+  "measurements": {
+    "first_stdlib_completion_ms": 201.0017,
+    "initialize_ms": 21.94,
+    "peak_outgoing_bytes": 4549,
+    "server_private_commit_MiB": 112.83203125,
+    "server_working_set_MiB": 58.734375,
+    "shutdown_ms": 5.7913,
+    "test_host_private_commit_MiB": 56.359375,
+    "test_host_working_set_MiB": 46.484375,
+    "warm_completion_samples_ms": [
+      0.3542,
+      0.3094,
+      0.3085,
+      0.2783,
+      0.2627,
+      0.1991,
+      0.2412,
+      0.3843,
+      0.2558,
+      0.1734,
+      0.2413,
+      0.1797
+    ]
+  },
+  "passed": true,
+  "results": [
+    {
+      "name": "utf8_bytes_convert_to_utf16_surrogate_pairs",
+      "passed": true
+    },
+    {
+      "name": "invalid_middle_of_surrogate_is_rejected",
+      "passed": true
+    },
+    {
+      "name": "crlf_and_eof_positions_round_trip",
+      "passed": true
+    },
+    {
+      "name": "incremental_change_uses_pre_edit_utf16_range",
+      "passed": true
+    },
+    {
+      "name": "line_index_tracks_insertions_and_deletions",
+      "passed": true
+    },
+    {
+      "name": "line_index_rebuilds_after_newline_changes",
+      "passed": true
+    },
+    {
+      "name": "file_uri_roundtrips_unicode_spaces_and_windows_drive",
+      "passed": true
+    },
+    {
+      "name": "file_uri_roundtrips_unc_paths",
+      "passed": true
+    },
+    {
+      "name": "malformed_uri_and_nonfile_schemes_are_rejected",
+      "passed": true
+    },
+    {
+      "name": "lsp_headers_and_utf8_body_can_arrive_one_byte_at_a_time",
+      "passed": true
+    },
+    {
+      "name": "multiple_lsp_frames_in_one_read_preserve_order",
+      "passed": true
+    },
+    {
+      "name": "oversized_or_duplicate_content_lengths_are_rejected",
+      "passed": true
+    },
+    {
+      "name": "completion_and_auto_import_are_planned_as_one_validated_transaction",
+      "passed": true
+    },
+    {
+      "name": "import_insertion_at_primary_edit_start_is_merged_deterministically",
+      "passed": true
+    },
+    {
+      "name": "overlapping_server_edits_are_rejected_before_editor_mutation",
+      "passed": true
+    },
+    {
+      "name": "completion_list_default_edit_ranges_are_supported",
+      "passed": true
+    },
+    {
+      "name": "signature_preserves_current_parameter_highlight",
+      "passed": true
+    },
+    {
+      "name": "calltip_wrapping_preserves_unicode_and_active_parameter_bytes",
+      "passed": true
+    },
+    {
+      "name": "bounded_documents_never_end_in_partial_utf8",
+      "passed": true
+    },
+    {
+      "name": "documentation_markdown_is_rendered_without_html_execution",
+      "passed": true
+    },
+    {
+      "name": "real_pyrefly_process_initializes_with_utf16_incremental_sync",
+      "passed": true
+    },
+    {
+      "name": "stdlib_members_are_inferred_even_when_absent_from_document_text",
+      "passed": true
+    },
+    {
+      "name": "cross_file_class_members_are_resolved",
+      "passed": true
+    },
+    {
+      "name": "hover_reports_inferred_type",
+      "passed": true
+    },
+    {
+      "name": "diagnostics_are_published_for_unsaved_open_document_version",
+      "passed": true
+    },
+    {
+      "name": "incremental_document_change_is_accepted",
+      "passed": true
+    },
+    {
+      "name": "real_signature_help_resolves_imported_method_and_active_argument",
+      "passed": true
+    },
+    {
+      "name": "repeated_warm_requests_complete_without_server_restart",
+      "passed": true
+    },
+    {
+      "name": "workspace_auto_import_candidates_are_available",
+      "passed": true
+    },
+    {
+      "name": "real_completion_resolve_supplies_validated_auto_import_edit",
+      "passed": true
+    },
+    {
+      "name": "late_response_from_previous_document_version_is_discarded",
+      "passed": true
+    },
+    {
+      "name": "transport_queue_remains_bounded",
+      "passed": true
+    },
+    {
+      "name": "closed_documents_release_text_and_diagnostics",
+      "passed": true
+    },
+    {
+      "name": "oversized_files_do_not_create_semantic_snapshots",
+      "passed": true
+    },
+    {
+      "name": "language_server_and_workers_exit_on_session_shutdown",
+      "passed": true
+    },
+    {
+      "name": "missing_backend_reports_failure_without_blocking_editor_thread",
+      "passed": true
+    },
+    {
+      "name": "invalid_transport_payload_reports_failure_and_releases_pipe_workers",
+      "passed": true
+    },
+    {
+      "name": "native_fixture_opens_without_touching_user_project",
+      "passed": true
+    },
+    {
+      "name": "native_editor_fixture_document_is_loaded",
+      "passed": true
+    },
+    {
+      "name": "native_completion_applies_import_and_identifier_at_correct_offsets",
+      "passed": true
+    },
+    {
+      "name": "native_auto_import_and_completion_undo_as_single_transaction",
+      "passed": true
+    },
+    {
+      "name": "native_completion_transaction_supports_redo",
+      "passed": true
+    },
+    {
+      "name": "completion_for_departed_tab_cannot_mutate_current_document",
+      "passed": true
+    },
+    {
+      "name": "completion_popup_is_nonactivating_and_keeps_editor_focus",
+      "passed": true
+    },
+    {
+      "name": "completion_popup_uses_eight_consistent_rows_at_current_dpi",
+      "passed": true
+    },
+    {
+      "name": "escape_hides_completion_without_destroying_cached_window",
+      "passed": true
+    },
+    {
+      "name": "completion_reuses_window_and_rendering_resources_across_themes",
+      "passed": true
+    }
+  ],
+  "scope": "Native protocol/session tests using the pinned real Pyrefly 1.4.1 process. Timings include local transport and response polling, not screen presentation."
+}

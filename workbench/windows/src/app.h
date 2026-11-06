@@ -4,6 +4,8 @@
 #include "ui/quick_pick.h"
 #include "runtime/console_view.h"
 #include "workspace/project_tree.h"
+#include "language/service.h"
+#include "ui/completion_popup.h"
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shobjidl.h>
@@ -17,6 +19,7 @@ public:
  int workbenchTest(const fs::path& report);
  int performanceTest(const fs::path& report);
  int iconTest(const fs::path& report);
+ int languageTest(const fs::path& report);
  bool hasTransientPopup() const { return popup || quickPick.isOpen(); }
 
 private:
@@ -47,6 +50,33 @@ private:
  int checkpointGeneration = 0;
  void flushRunOutput();
  void clearConsole(bool terminal);
+ orbit::language::Service language;
+ orbit::CompletionPopup completionPopup;
+ fs::path languageRoot;
+ std::wstring languageInterpreter;
+ std::string completionPath;
+ std::uint64_t completionRevision = 0;
+ std::size_t completionCaret = 0, completionPrefix = 0;
+ std::size_t hoverPosition = std::string::npos;
+ std::vector<orbit::language::Completion> completionItems;
+ std::string languageStatus;
+ bool signatureVisible = false;
+ std::string pendingCompletionAccept;
+ void startLanguage(bool force = false);
+ void syncLanguageDocument();
+ void languageChanged(SCNotification* event);
+ void pollLanguage();
+ void requestLanguageCompletion(bool explicitRequest = false);
+ void requestSignature();
+ void requestHover(std::size_t position);
+ void resolveCompletion();
+ void acceptCompletion(std::size_t index);
+ bool languageKey(UINT key, bool ctrl, bool shift, bool alt);
+ void closeLanguageHints();
+ void updateDiagnosticIndicators();
+ void showLanguageTip(std::string text, std::size_t position, int highlightStart = 0, int highlightEnd = 0);
+ int diagnosticCount() const;
+ void renderLanguageProblems(D2D1_RECT_F bounds, float top);
 public:
  HINSTANCE instance{};HWND window{},editor{},output{},termOutput{},searchEdit{},termEdit{},popup{},popupEdit{},popupEdit2{},dimmer{},menuWindow{},tooltip{};
  ComPtr<ID2D1Factory>d2d;ComPtr<IDWriteFactory>dw;ComPtr<IDWriteFontCollection>fontCollection;Paint paint,popupPaint,menuPaint;

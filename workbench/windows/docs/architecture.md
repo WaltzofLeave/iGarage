@@ -1,7 +1,8 @@
 # Windows workbench structure
 
-The native Win32 application stays in this platform directory. Domain state does
-not hold Windows handles or editor text; the host adapts that state to Scintilla.
+The native Win32 application stays in this platform directory. Navigation and
+outline models do not own editor windows; the host adapts them to Scintilla.
+Language sessions keep a bounded UTF-8 mirror for protocol position conversion.
 
 | Location | Responsibility |
 | --- | --- |
@@ -14,6 +15,11 @@ not hold Windows handles or editor text; the host adapts that state to Scintilla
 | `src/editor/text_format.h` | Newline detection without rewriting existing content. |
 | `src/ui/quick_pick.*` | Reusable native filtered list. Owns its popup, input font, brush, and rendering resources. |
 | `src/ui/icons.*` | Typed asset registry, file/symbol mappings, licensed SVG loading, bounded shared GPU bitmap cache and Scintilla fold images. |
+| `src/language/protocol.*` | Window-independent framing, UTF-8/UTF-16 positions, validated completion transactions and hint models. |
+| `src/language/client.*` | Hidden Windows process, restricted inherited pipes, bounded queues, worker threads and job-owned lifetime. |
+| `src/language/service.*` | LSP capabilities/configuration, incremental document mirrors, cancellation, revision checks and diagnostics. |
+| `src/language/workbench_language.cpp` | Scintilla adapter: requests, atomic edits, calltips and Problems panel integration. |
+| `src/ui/completion_popup.*` | Nonactivating native candidate/documentation window; retained swap chain and DirectWrite formats. |
 | `src/runtime/output_buffer.*` | UI-independent bounded transport, cancellation, and UTF-8-safe line display limits. |
 | `src/runtime/console_view.*` | Non-owning Scintilla console adapter: bounded display, styles, viewport following, and disabled undo. |
 | `src/workspace/project_tree.*` | UI-independent directory membership index and visible-row projection. |
@@ -56,8 +62,38 @@ The earlier performance audit remains a baseline. The two passes address cached
 activation, closed-document retention, indexed tree projection, bounded process
 output, and background checkpoint listing. Main-workbench repaint regions and
 remaining synchronous file-operation waits still need separate work. This is a
-native workbench update, not a language server, semantic refactoring engine, or
-debugger implementation.
+native workbench update. Python now connects to a separate language server;
+semantic refactoring and debugging remain future work.
+
+## Language-service boundaries
+
+The UI thread owns `Service` and document revisions. It never performs pipe I/O
+or waits for analysis. `Client` launches the process on a worker, serializes and
+writes on a second worker, and drains stderr on a third. Its wake callback only
+posts a window message. A 100 ms maintenance timer handles failure/timeouts; normal
+responses wake the UI immediately. The analysis engine uses two worker threads.
+
+Each edit is converted using the old text range before updating the mirror. The
+host sends incremental changes and cancels obsolete requests. Results must match
+the active document, revision, caret and focus. Closing, switching, Escape and
+focus loss cancel hints. A lazy completion resolve completes before accepting an
+item so its import edits are retained. All offsets/overlaps are checked before
+opening one Scintilla undo group. Closing a document releases its mirror and
+diagnostics; changing projects or interpreter replaces the job-owned process.
+
+Mirrors are capped at 64 documents × 2 MiB. Incoming/outgoing queue budgets are
+16 MiB, also capped at 128 events / 512 requests; overflow fails analysis rather
+than blocking the editor. Framing limits are 8 KiB headers and 16 MiB bodies.
+Completion models keep at most 500 candidates, diagnostics 200 per document.
+Provider requests expire at 10 seconds; initialization expires at 15 seconds.
+Large files remain editable while semantic analysis is paused. The process's
+total memory is not capped; its project/import work may use additional memory.
+
+The completion window hides between requests rather than recreating its window,
+swap chain or font formats for every keystroke. It borrows the shared icon atlas.
+Signature and hover calltips stay native to Scintilla. Calltips wrap with a byte
+mapping that preserves Unicode and active-argument highlighting, capped at
+2,200 bytes and 16 lines. Neither surface activates a modal overlay.
 
 ## Output and checkpoint budgets
 

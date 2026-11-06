@@ -3,11 +3,11 @@
   "passed": true,
   "performance": {
     "cached_10MiB_activation_samples_ms": [
-      1.8667,
-      1.8771,
-      1.8764,
-      1.7504,
-      1.7466
+      2.5133,
+      2.5978,
+      2.4477,
+      2.3987,
+      2.923
     ],
     "scope": "Five method-level warm samples; not input-to-screen latency. No disk read or full lexical analysis is forced on activation."
   },

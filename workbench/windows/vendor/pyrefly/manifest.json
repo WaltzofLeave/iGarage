@@ -1,0 +1,16 @@
+{
+  "name": "pyrefly",
+  "version": "1.4.1",
+  "platform": "windows-x86_64",
+  "license": "MIT",
+  "source": "https://github.com/meta/pyrefly/tree/1.4.1",
+  "url": "https://github.com/meta/pyrefly/releases/download/1.4.1/pyrefly-windows-x86_64.zip",
+  "archive_sha256": "5a90780dbb78faad27bab4ce6e14f5ae0065e0aa3a46f5542c62ad62533c5c3b",
+  "binary_sha256": "a334e1361ffbcac7b34056c81e4840fab3e9888076f8059235879803567edef3",
+  "binary_bytes": 35064832,
+  "files": {
+    "dependency-inventory.json": "4b617707ea5d24198f8749eae8c542388c47f43cc3bb60cb4b7c65112768276f",
+    "LICENSE.txt": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+    "THIRD-PARTY-LICENSES.txt": "37ba613b84a9ca025ab1bcb05e98aead6691a5cd897795f48aaaf17b57d5d58c"
+  }
+}

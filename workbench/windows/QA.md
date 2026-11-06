@@ -91,3 +91,52 @@ bounds, actual native folding and warmed cache reuse. The 100% and 200% checks a
 offscreen raster tests, not physical-monitor visual coverage. The cache lookup
 timing in the report measures CPU access only; it is not GPU latency or an IDE
 performance comparison.
+
+## 2026-11-07: native Python semantic hints
+
+All 165 native checks passed: the previous 118 plus 47
+protocol, real-server and native-editor checks. The default build completed with
+no compiler warnings. Reports: `qa/language-tests.json` and
+`qa/language-followup.json`; design and redistribution details are in
+[the language-service notes](docs/python-language-service.md).
+
+The new checks cover UTF-16 surrogate pairs, Chinese/emoji/CRLF offsets, split
+LSP frames, oversized frames, imported project methods, inferred stdlib members,
+hover types, active signature parameters, diagnostics for unsaved versions,
+auto-import candidates and resolve, shared-start import edits, transactional
+Scintilla undo/redo, departed-tab protection, cancellation, queue/file limits,
+worker shutdown, missing executables and invalid UTF-8 transport failure.
+Native popup checks cover no activation, eight rows at current DPI, Escape,
+retained HWND and theme reuse. They do not prove live visual appearance.
+
+On the tiny isolated fixture, process start to initialize measured
+21.94 ms, first stdlib completion
+201.00 ms, and 12 warm local completions
+had a median of 0.259 ms (range 0.173–0.384 ms).
+The tested server working set was 58.73 MiB
+and private commit 112.83 MiB. These
+figures include local transport/event polling, use warm OS caches and exclude GPU
+presentation, whole-project indexing and keystroke-to-screen latency. They are
+not a benchmark comparison with PyCharm or a latency guarantee for large projects.
+
+**Live visual verification is incomplete.** The window automation helper twice
+failed to activate Orbit and returned another foreground application's image.
+No new feature screenshot is presented as evidence. Earlier icon/layout screenshots
+remain historical records. New completion/calltip dark/light visual comparison,
+multiple-monitor placement and live keyboard/mouse interaction still need a
+working desktop capture session.
+
+The backend preparation gate checks the official ZIP, executable and complete
+reviewed notice bytes. The inventory covers 443 Cargo.lock registry packages
+(a conservative superset) plus nine bundled-stub license files. The selected
+grants allow commercial redistribution with their stated obligations; the
+unmodified MPL component includes its license and versioned corresponding-source
+link. The existing 105-icon offline gate also passed. The portable package
+includes the native backend and notices; no runtime download is performed.
+
+Clean delivery verification: a fresh tracked-source export rebuilt Scintilla,
+Lexilla and the app with the default build script, using a checksum-verified
+offline backend cache. The rebuilt executable passed 32 baseline + 47 language
+checks. A separate fresh portable-ZIP extraction passed all 165 native checks,
+including the real bundled analysis process. Backend and redistribution-notice
+hashes matched in both locations. See `qa/language-delivery-check.json`.

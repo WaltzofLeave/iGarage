@@ -41,3 +41,18 @@ app\OrbitNative.exe --performance-test
 warm document-activation samples in `app/workbench-tests.json`. Method timing
 does not measure input-to-screen latency. UI screenshots and the final checks
 are recorded under `qa/`.
+
+## Python semantic hints
+
+The Windows client now integrates native Pyrefly over LSP: semantic candidates,
+import edits, parameter help, documentation and diagnostics. `Ctrl+Space` requests
+candidates, `Ctrl+Shift+Space` parameters, and `Ctrl+Q` documentation. `Ctrl+P`
+continues to find files. The popup uses the existing licensed symbol assets;
+code-editor font/line spacing and fold artwork are unchanged.
+
+This follows documented completion workflows. It does not use PyCharm's internal
+PSI/indexing implementation or claim matching ranking/refactoring behavior. Read
+[the language-service design](python-language-service.md) for scope and checks.
+The new popup's native lifecycle and layout properties are covered by automated
+tests. A fresh live visual comparison was blocked by the window automation helper;
+previous UI screenshots remain historical evidence, not proof of this feature.

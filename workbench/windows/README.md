@@ -19,7 +19,8 @@
 | --- | --- |
 | 深色工作台、文件树、编辑标签、面包屑、结构栏、运行面板、状态栏 | Direct2D / DirectWrite 自绘，沿用原始色值与主要尺寸 |
 | 语法高亮、折叠、选区、括号匹配、自动缩进、撤销重做 | Scintilla + Lexilla |
-| 单词补全、注释切换、查找替换、转到行 | 原生编辑器命令与当前文件词表 |
+| Python 语义补全、参数提示、快速文档、实时诊断 | 原生 Pyrefly 子进程，通过增量 LSP 与 Scintilla 集成 |
+| 其他语言单词补全、注释切换、查找替换、转到行 | 原生编辑器命令与当前文件词表 |
 | 项目搜索、结果跳转、文件搜索、命令面板 | 后台搜索队列与原生弹窗 |
 | 新建、重命名、删除、导入、单文件下载 | 本地文件操作；删除移入项目 `.orbit/trash/` |
 | 项目导入导出 | 沿用 `orbit-project-v1` JSON 格式，可与网页版互通 |
@@ -28,7 +29,7 @@
 | 项目终端 | help、ls、pwd、cat、clear、python、python -c、python -m unittest |
 | 深浅主题、字号、缩进、自动换行、可拖动面板 | 即时应用并保存到本地 |
 
-项目搜索返回前 150 个匹配，跳过超过 16 MiB 的文件；项目扫描上限为 20,000 个支持的文本文件。大于 2 MiB 的文件暂停结构提取和单词补全。检查点列表展示最近 10 个版本。
+项目搜索返回前 150 个匹配，跳过超过 16 MiB 的文件；项目扫描上限为 20,000 个支持的文本文件。大于 2 MiB 的文件暂停结构提取与语义分析。检查点列表展示最近 10 个版本。
 
 ## 快捷键
 
@@ -40,7 +41,9 @@
 | 项目搜索 | Ctrl+Shift+F |
 | 文件内查找 / 替换 | Ctrl+F / Ctrl+H |
 | 转到行 | Ctrl+G |
-| 单词补全 | Ctrl+Space |
+| Python 语义补全 / 其他语言单词补全 | Ctrl+Space |
+| 函数参数提示 | Ctrl+Shift+Space |
+| 快速文档 | Ctrl+Q，或鼠标停留 500 ms |
 | 注释切换 | Ctrl+/ |
 | 新建文件 | Ctrl+Alt+N |
 | 关闭当前标签 / 切换标签 | Ctrl+W / Ctrl+Tab |
@@ -49,17 +52,18 @@
 
 ## 编译
 
-安装带有 Desktop development with C++ 的 Visual Studio 2022 和 Windows SDK，在本目录运行：
+安装带有 Desktop development with C++ 的 Visual Studio 2022、Windows SDK 和 Python 3.11+，在本目录运行：
 
 ```bat
 build.cmd
 ```
 
-脚本使用 vswhere 定位 MSVC，编译已随源码提供的依赖，生成 `app/OrbitNative.exe`。编译参数为 x64、C++20、`/O2 /GL /LTCG /MT`。编译无需联网。
+脚本使用 vswhere 定位 MSVC，编译已随源码提供的静态库，生成 `app/OrbitNative.exe`。编译参数为 x64、C++20、`/O2 /GL /LTCG /MT`。首次构建会从官方 release 下载固定版本的 Pyrefly 并校验归档与可执行文件的 SHA-256；缓存准备后可离线构建。也可提前运行 `python tools/fetch_pyrefly.py`，用 `--offline` 检查离线准备。`ORBIT_PYTHON` 可指定构建脚本使用的 Python 路径。
 
 ```bat
 app\OrbitNative.exe --self-test
 app\OrbitNative.exe --integration-test
+app\OrbitNative.exe --language-test
 app\OrbitNative.exe --benchmark
 ```
 
@@ -78,7 +82,7 @@ app\OrbitNative.exe --benchmark
 
 ## 当前边界
 
-本次完成原生前端与 Orbit 网页版已有工作流程。项目终端是内置项目命令环境；完整 ConPTY 系统终端、Git、LSP 语义补全、debugpy 断点调试和插件系统尚未接入。原生文件选择器、窗口控制按钮和部分焦点表现采用 Windows 习惯，不承诺与浏览器逐像素相同。自绘控件的完整 UI Automation / 屏幕阅读器支持仍需补充。
+本次完成原生前端与 Orbit 网页版已有工作流程，并接入 Python LSP 语义提示。项目终端是内置项目命令环境；完整 ConPTY 系统终端、Git、语义重构、debugpy 断点调试和插件系统尚未接入。原生文件选择器、窗口控制按钮和部分焦点表现采用 Windows 习惯，不承诺与浏览器逐像素相同。自绘控件的完整 UI Automation / 屏幕阅读器支持仍需补充。
 
 Orbit 与 JetBrains / PyCharm 无关联。第三方许可证随便携包及源码提供。
 
@@ -131,3 +135,25 @@ under Apache-2.0, and no JetBrains/PyCharm product branding is included.
 
 Run `python tools/check_icon_licenses.py` for the offline asset gate and
 `app\OrbitNative.exe --icon-test` for native SVG/DPI/folding/cache checks.
+
+## Python semantic hints
+
+Python completion now resolves standard-library and imported project types rather
+than relying on words in the current file. The native chooser shows symbol kinds,
+signatures and documentation; Enter/Tab inserts and Escape dismisses. Automatic
+imports are validated before editing and share one undo transaction with the
+completed identifier. Parameter help highlights the active argument. Hover/Ctrl+Q
+shows inferred types or a diagnostic; the Problems panel lists diagnostics and can
+jump to their source line. Tools → Restart Code Analysis recovers the service.
+
+The bundled Pyrefly 1.4.1 process uses two analysis threads, background indexing
+limited to 2,000 workspace files, and the selected Python interpreter. Analysis
+mirrors at most 64 opened Python documents, each at most 2 MiB; transport queues
+have 16 MiB budgets. Runtime startup and analysis are asynchronous. No AI service,
+runtime download, Node.js runtime, or WebView is required. First completion may
+wait for imports/indexing; it is not claimed to be instant on large projects.
+
+See [the design and redistribution review](docs/python-language-service.md),
+`qa/language-tests.json`, and [the architecture](docs/architecture.md).
+
+Build a checked portable ZIP with `python tools/package_portable.py --output build/Orbit-Workbench-Windows-x64.zip`.

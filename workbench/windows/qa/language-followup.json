@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-07",
+  "passed": true,
+  "native_checks": 165,
+  "suites": {
+    "native-self-test.json": {
+      "checks": 32,
+      "passed": true
+    },
+    "workbench-tests.json": {
+      "checks": 37,
+      "passed": true
+    },
+    "native-integration-test.json": {
+      "checks": 18,
+      "passed": true
+    },
+    "performance-tests.json": {
+      "checks": 21,
+      "passed": true
+    },
+    "icon-tests.json": {
+      "checks": 10,
+      "passed": true
+    },
+    "language-tests.json": {
+      "checks": 47,
+      "passed": true
+    }
+  },
+  "build": "MSVC x64 C++20 /O2 /GL /LTCG /MT, full default build, no compiler warnings",
+  "application_sha256": "aeea4a4f5c5c75f7cadfe9ffb174b74240cef0b0a1ab0c8235c199ab0a735da4",
+  "backend": {
+    "name": "pyrefly",
+    "version": "1.4.1",
+    "binary_sha256": "a334e1361ffbcac7b34056c81e4840fab3e9888076f8059235879803567edef3",
+    "threads": 2,
+    "workspace_indexing_limit": 2000
+  },
+  "latency": {
+    "samples": 12,
+    "warm_median_ms": 0.25925,
+    "warm_min_ms": 0.1734,
+    "warm_max_ms": 0.3843,
+    "process_start_to_initialized_ms": 21.94,
+    "first_stdlib_completion_ms": 201.0017
+  },
+  "memory": {
+    "server_private_commit_MiB": 112.83203125,
+    "server_working_set_MiB": 58.734375,
+    "test_host_private_commit_MiB": 56.359375,
+    "test_host_working_set_MiB": 46.484375
+  },
+  "visual_verification": {
+    "status": "blocked",
+    "reason": "The Windows window helper twice failed to activate the selected Orbit window and captured another foreground application. No new feature screenshots are claimed.",
+    "automated_scope": "Native popup no-activation, eight-row DPI geometry, Escape, retained window, theme reuse, Scintilla edits/undo/redo. These checks do not establish live visual parity."
+  },
+  "measurement_scope": "Small isolated fixture, freshly started Pyrefly process with warm OS caches; 12 repeated local request/response samples include pipes and event-driven polling. Excludes keystroke-to-screen/GPU presentation, whole-project indexing and any comparison to PyCharm. Host memory is the test process; server memory is the tested Pyrefly process."
+}

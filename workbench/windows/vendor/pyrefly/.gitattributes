@@ -1,0 +1,5 @@
+# Preserve the exact bytes pinned by manifest.json on Windows checkouts.
+LICENSE.txt -text
+THIRD-PARTY-LICENSES.txt -text -whitespace linguist-generated=true
+dependency-inventory.json -text
+.gitattributes text eol=lf

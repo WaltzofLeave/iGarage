@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-07",
+  "passed": true,
+  "source_build": {
+    "origin": "Fresh git checkout-index export; generated app/build/vendor bin outputs absent before preparation.",
+    "backend_preparation": "Offline, using the checksum-verified upstream release archive cache.",
+    "full_default_build": "passed",
+    "compiler_warnings": 0,
+    "native_checks": 79,
+    "suites": {
+      "native-self-test.json": 32,
+      "language-tests.json": 47
+    },
+    "binary_sha256": "3b60a49ff00ca788a09a79fff0cc26e65bffcf213b4c64e21677c0a7a44a6661"
+  },
+  "portable": {
+    "origin": "Fresh ZIP extraction, standalone release app and bundled service.",
+    "native_checks": 165,
+    "suites": {
+      "native-self-test.json": 32,
+      "workbench-tests.json": 37,
+      "native-integration-test.json": 18,
+      "performance-tests.json": 21,
+      "icon-tests.json": 10,
+      "language-tests.json": 47
+    },
+    "application_sha256": "aeea4a4f5c5c75f7cadfe9ffb174b74240cef0b0a1ab0c8235c199ab0a735da4",
+    "backend_and_all_notice_hashes": "passed",
+    "runtime_download_required": false
+  },
+  "live_visual_verification": "Blocked by window activation/capture failure; not claimed complete."
+}
